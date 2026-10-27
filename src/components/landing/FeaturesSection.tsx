@@ -394,11 +394,11 @@ interface FeatureItem {
 const features: FeatureItem[] = [
   {
     title: 'Sites e landing pages',
-    benefit: 'Páginas rápidas voltadas para a conversão de clientes locais.',
+    benefit: 'Visitantes locais viram contatos reais direto no WhatsApp e no CRM.',
     entregamos: [
-      'Estrutura mobile first e veloz',
-      'Design alinhado à sua marca',
-      'Integração direta com WhatsApp',
+      'Estrutura veloz orientada a conversão',
+      'Conexão nativa com a IA no WhatsApp',
+      'Rastreamento completo do primeiro clique',
     ],
     icon: LayoutTemplate,
     size: 'wide',
@@ -406,11 +406,11 @@ const features: FeatureItem[] = [
   },
   {
     title: 'Portfólios digitais',
-    benefit: 'Seus melhores projetos organizados com clareza para fechar propostas.',
+    benefit: 'Trabalhos demonstrados com agilidade para acelerar decisões de contratação.',
     entregamos: [
-      'Galeria limpa de projetos',
-      'Contexto antes e depois',
-      'Carregamento rápido em fotos',
+      'Apresentação clara de projetos e acabamentos',
+      'Vinculação direta com a agenda de atendimento',
+      'Visualização leve no celular do cliente',
     ],
     icon: Rows3,
     size: 'small',
@@ -418,11 +418,11 @@ const features: FeatureItem[] = [
   },
   {
     title: 'Catálogos digitais',
-    benefit: 'Informação de produtos fácil de atualizar e consultar no balcão ou no chat.',
+    benefit: 'Itens e valores sempre em dia sem envio de arquivos pesados.',
     entregamos: [
-      'Atualização simples e central',
-      'Visualização ágil no celular',
-      'Envio de item para o WhatsApp',
+      'Atualização central em tempo real',
+      'Compartilhamento instantâneo no balcão e no chat',
+      'Direcionamento de pedidos para a conversa',
     ],
     icon: Code2,
     size: 'tall',
@@ -430,11 +430,11 @@ const features: FeatureItem[] = [
   },
   {
     title: 'Agendamento com Google Calendar',
-    benefit: 'Horários disponíveis confirmados sem troca de mensagens demoradas.',
+    benefit: 'Horários confirmados automaticamente sem conflitos de agenda na equipe.',
     entregamos: [
-      'Sincronização com agenda oficial',
-      'Bloqueio automático de choque de horários',
-      'Confirmação com o cliente',
+      'Sincronização imediata com o Google Calendar',
+      'Ligação direta ao site e ao portfólio de serviços',
+      'Confirmação prévia que reduz ausências',
     ],
     icon: CalendarDays,
     size: 'large',
@@ -442,11 +442,11 @@ const features: FeatureItem[] = [
   },
   {
     title: 'Atendimento e automação no WhatsApp',
-    benefit: 'Dúvidas frequentes respondidas no primeiro minuto, sem perder o tom humano.',
+    benefit: 'Respostas imediatas dia e noite com qualificação antes da equipe humana.',
     entregamos: [
-      'Triagem inicial rápida',
-      'Respostas de dúvidas comuns',
-      'Transbordo para atendente humano',
+      'Triagem inteligente com IA treinada no negócio',
+      'Integração contínua com páginas e catálogo',
+      'Encaminhamento com contexto para o atendente',
     ],
     icon: MessageCircle,
     size: 'medium',
@@ -454,11 +454,11 @@ const features: FeatureItem[] = [
   },
   {
     title: 'CRM e acompanhamento de leads',
-    benefit: 'Histórico de cada conversa para sua equipe não esquecer nenhum orçamento.',
+    benefit: 'Nenhuma oportunidade esquecida e visão nítida de cada proposta aberta.',
     entregamos: [
-      'Registro automático do contato',
-      'Status de cada negociação',
-      'Lembretes de retorno',
+      'Registro automático das conversas do WhatsApp',
+      'Painel de etapas de negociação e fechamento',
+      'Alertas de acompanhamento em cada fase',
     ],
     icon: UserRoundSearch,
     size: 'wide',
@@ -466,11 +466,11 @@ const features: FeatureItem[] = [
   },
   {
     title: 'Presença no Google',
-    benefit: 'Perfil da sua empresa bem posicionado para buscas da sua região.',
+    benefit: 'Mais clientes da cidade encontrando seu negócio no momento da busca.',
     entregamos: [
-      'Otimização do Perfil da Empresa',
-      'Fotos e horários atualizados',
-      'Estratégia para novas avaliações',
+      'Perfil da Empresa configurado com precisão',
+      'Informações e localização sempre alinhadas',
+      'Canal aberto para captação de avaliações',
     ],
     icon: Globe2,
     size: 'wide',
@@ -527,7 +527,7 @@ export function FeaturesSection() {
         <SectionHeading
           eyebrow="Soluções digitais"
           title="Soluções digitais"
-          description="A implementação muda. O critério não."
+          description="Um sistema só. Do primeiro contato ao pós-venda."
         />
         <div className="bento-grid">
           {features.map(({ title, benefit, entregamos, icon: Icon, size, demoType }) => {

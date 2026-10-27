@@ -78,13 +78,14 @@ export function Layout({ children }: LayoutProps) {
     }
   }, [])
 
-  // Determina URL de embed: usa MAPS_EMBED_URL ou monta via Place ID se preenchido
+  // Determina URL de embed com centralização em Joinville e na Nozes Ink:
+  // Usa MAPS_EMBED_URL com fallback garantido de consulta no endereço oficial e Place ID
   const resolvedMapsEmbedUrl =
     MAPS_EMBED_URL && MAPS_EMBED_URL.trim().length > 0
       ? MAPS_EMBED_URL
-      : MAPS_PLACE_ID && MAPS_PLACE_ID.trim().length > 0
-        ? `https://www.google.com/maps?q=place_id:${MAPS_PLACE_ID}&output=embed`
-        : ''
+      : `https://maps.google.com/maps?q=${encodeURIComponent(
+          'Nozes Ink, ' + ENDERECO_RODAPE,
+        )}&t=m&z=15&output=embed`
 
   // Lazy loading do iframe do mapa via IntersectionObserver
   useEffect(() => {

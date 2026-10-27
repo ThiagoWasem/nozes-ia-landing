@@ -167,8 +167,6 @@ export function AudienceSection() {
             return (
               <article
                 key={titulo}
-                data-reveal
-                style={{ '--delay': `${index * 45}ms` } as React.CSSProperties}
                 className={`audience-card ${isHighlighted ? 'is-highlighted' : ''}`}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
