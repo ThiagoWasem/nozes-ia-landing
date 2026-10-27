@@ -192,6 +192,15 @@ export function Layout({ children }: LayoutProps) {
         </a>
       </div>
 
+      {/* Barra de progresso de leitura no topo fixo */}
+      <div
+        className="reading-progress-bar"
+        aria-hidden="true"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
+
       <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="shell header-inner">
           <Link to="/" aria-label="Nozes Ink, página inicial" className="brand-link">

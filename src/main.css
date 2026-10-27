@@ -134,6 +134,28 @@ svg {
 .section-heading.is-light > p:last-child {
   color: rgba(242, 240, 234, 0.68);
 }
+/* Barra de progresso de leitura no topo fixo */
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 100;
+  pointer-events: none;
+  background: transparent;
+}
+.reading-progress-bar::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: var(--scroll-progress, 0%);
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  box-shadow: 0 0 8px rgba(192, 142, 75, 0.6);
+  transition: width 80ms ease-out;
+  will-change: width;
+}
+
 /* Conteúdo visível por padrão; somente quando JS ativo e com animações habilitadas o observador adiciona a classe js-reveal para preparar o efeito de entrada */
 [data-reveal] {
   opacity: 1;
@@ -141,14 +163,57 @@ svg {
 }
 html.js-reveal [data-reveal] {
   opacity: 0;
-  transform: translate3d(0, 24px, 0);
+  transform: translate3d(0, 20px, 0);
   transition:
-    opacity 500ms ease-out var(--delay, 0ms),
-    transform 500ms ease-out var(--delay, 0ms);
+    opacity 450ms cubic-bezier(0.2, 0.8, 0.25, 1) var(--delay, 0ms),
+    transform 450ms cubic-bezier(0.2, 0.8, 0.25, 1) var(--delay, 0ms);
+  will-change: opacity, transform;
 }
 html.js-reveal [data-reveal].is-revealed {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+}
+
+/* Stagger / cascata dentro de seções e grids */
+.bento-grid > article:nth-child(1) {
+  --delay: 0ms;
+}
+.bento-grid > article:nth-child(2) {
+  --delay: 60ms;
+}
+.bento-grid > article:nth-child(3) {
+  --delay: 120ms;
+}
+.bento-grid > article:nth-child(4) {
+  --delay: 180ms;
+}
+.bento-grid > article:nth-child(5) {
+  --delay: 240ms;
+}
+.bento-grid > article:nth-child(6) {
+  --delay: 300ms;
+}
+.bento-grid > article:nth-child(7) {
+  --delay: 360ms;
+}
+
+.audience-row > article:nth-child(1) {
+  --delay: 0ms;
+}
+.audience-row > article:nth-child(2) {
+  --delay: 50ms;
+}
+.audience-row > article:nth-child(3) {
+  --delay: 100ms;
+}
+.audience-row > article:nth-child(4) {
+  --delay: 150ms;
+}
+.audience-row > article:nth-child(5) {
+  --delay: 200ms;
+}
+.audience-row > article:nth-child(6) {
+  --delay: 250ms;
 }
 
 /* Cabeçalho e rodapé */
@@ -2385,6 +2450,9 @@ html.js-reveal [data-reveal].is-revealed {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .reading-progress-bar {
+    display: none !important;
   }
   [data-reveal],
   html.js-reveal [data-reveal] {
