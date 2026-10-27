@@ -1,101 +1,171 @@
-import { BarChart3, Play } from 'lucide-react'
-import { CASOS, CONFIG } from '@/lib/site'
+import { useState } from 'react'
+import { MapPin, Globe, TrendingUp, Users, Clock } from 'lucide-react'
+import { CASOS } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
 import { SectionHeading } from './SectionHeading'
 
-const incomplete = (value: string) =>
+const areaIcons: Record<
+  string,
+  React.ComponentType<{
+    size?: number
+    className?: string
+    'aria-hidden'?: boolean | 'true' | 'false'
+  }>
+> = {
+  'Google Meu Negócio': MapPin,
+  'Novo site': Globe,
+  'Conversão de vendas': TrendingUp,
+  'Crescimento de seguidores': Users,
+}
+
+const incomplete = (value: string | undefined) =>
   !value || /^\[(preencher|foto|print|vazio|url ou vazio)\]$/i.test(value.trim())
 
-function MediaFrame({ value, label, area }: { value: string; label: string; area: string }) {
-  if (incomplete(value)) {
-    return (
-      <div className="case-placeholder" aria-label={`${label} ainda não publicado`}>
-        <BarChart3 size={24} aria-hidden="true" />
-      </div>
-    )
+// Componente de slider antes/depois para casos com autorização expressa
+function BeforeAfterSlider({
+  antes,
+  depois,
+  area,
+}: {
+  antes: string
+  depois: string
+  area: string
+}) {
+  const [sliderPos, setSliderPos] = useState(50)
+
+  if (incomplete(antes) || incomplete(depois)) {
+    return null
   }
+
   return (
-    <img
-      src={value}
-      width="640"
-      height="440"
-      loading="lazy"
-      alt={`${label} do projeto de ${area}`}
-    />
+    <div className="case-slider-wrap">
+      <div className="case-slider-container">
+        <img src={depois} alt={`Depois: ${area}`} className="case-slider-img" />
+        <div
+          className="case-slider-overlay"
+          style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+        >
+          <img src={antes} alt={`Antes: ${area}`} className="case-slider-img" />
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={sliderPos}
+          onChange={(e) => setSliderPos(Number(e.target.value))}
+          className="case-slider-range"
+          aria-label={`Comparação antes e depois para ${area}`}
+        />
+        <div className="case-slider-labels">
+          <span className="case-badge-before">Antes</span>
+          <span className="case-badge-after">Depois</span>
+        </div>
+      </div>
+    </div>
   )
 }
 
 export function CasesSection() {
-  const cases = CONFIG.casos_reais_ativos ? CASOS.filter((item) => Boolean(item.autorizado)) : []
-  if (cases.length === 0) return null
-
+  // A seção "Resultados de clientes" permanece SEMPRE visível, mesmo sem casos autorizados.
   return (
     <section className="section cases-section" aria-labelledby="cases-title">
       <div className="shell">
         <SectionHeading
           eyebrow="Casos reais"
-          title="Evidência autorizada. Sem resultado inventado."
-          description="Cada caso publicado mostra contexto, mudança e prova com autorização do cliente."
+          title="Resultados de clientes"
+          description="Mostramos cada caso com autorização do cliente."
         />
         <div className="cases-grid">
-          {cases.map((item) => (
-            <article
-              className="case-card"
-              data-reveal
-              key={item.area}
-              onClick={() => trackEvent('interacao_casos', { area: item.area })}
-            >
-              <p className="case-area">{item.area}</p>
-              <div className="case-metric">
-                {incomplete(item.metrica.valor) ? (
-                  <div className="case-placeholder compact">
-                    <BarChart3 size={22} />
+          {CASOS.map((item) => {
+            const Icon = areaIcons[item.area] || TrendingUp
+            const isAuthorized = Boolean(item.autorizado)
+
+            return (
+              <article
+                className={`case-card ${isAuthorized ? 'is-authorized' : 'is-pending'}`}
+                data-reveal
+                key={item.area}
+                onClick={() =>
+                  trackEvent('interacao_casos', { area: item.area, autorizado: isAuthorized })
+                }
+              >
+                <div className="case-card-header">
+                  <div className="case-area-tag">
+                    <Icon size={16} aria-hidden="true" />
+                    <span>{item.area}</span>
+                  </div>
+                  <span className="case-client-ref">{item.cliente}</span>
+                </div>
+
+                {!isAuthorized ? (
+                  /* COM autorizado: false, cada card mostra moldura evergreen, ícone da área e o rótulo "Caso em preparação". Sem texto, número, foto ou depoimento fictício. */
+                  <div className="case-pending-frame" role="status">
+                    <div className="case-pending-icon-wrap">
+                      <Icon size={32} aria-hidden="true" />
+                    </div>
+                    <div className="case-pending-status">
+                      <Clock size={15} aria-hidden="true" />
+                      <strong>Caso em preparação</strong>
+                    </div>
                   </div>
                 ) : (
-                  <strong>{item.metrica.valor}</strong>
+                  /* COM autorizado: true, mostra os campos cadastrados sem alterar o layout */
+                  <div className="case-authorized-content">
+                    {!incomplete(item.metrica.valor) && (
+                      <div className="case-metric">
+                        <strong>{item.metrica.valor}</strong>
+                        {!incomplete(item.metrica.rotulo) && <span>{item.metrica.rotulo}</span>}
+                      </div>
+                    )}
+
+                    {!incomplete(item.texto) && (
+                      <div className="case-text">
+                        <p>{item.texto}</p>
+                      </div>
+                    )}
+
+                    {!incomplete(item.antes_depois.antes) &&
+                      !incomplete(item.antes_depois.depois) && (
+                        <BeforeAfterSlider
+                          antes={item.antes_depois.antes}
+                          depois={item.antes_depois.depois}
+                          area={item.area}
+                        />
+                      )}
+
+                    {!incomplete(item.video) && (
+                      <video
+                        controls
+                        preload="none"
+                        poster="/video-poster.svg"
+                        playsInline
+                        onPlay={() =>
+                          trackEvent('interacao_casos', {
+                            area: item.area,
+                            acao: 'reproduzir_video',
+                          })
+                        }
+                      >
+                        <source src={item.video} />
+                        Seu navegador não suporta este vídeo.
+                      </video>
+                    )}
+
+                    {!incomplete(item.depoimento.texto) && (
+                      <blockquote className="case-quote">
+                        <b className="quote-mark">“</b>
+                        <p>{item.depoimento.texto}</p>
+                        <footer>
+                          {item.depoimento.autor}
+                          {!incomplete(item.depoimento.cargo) && `, ${item.depoimento.cargo}`}
+                        </footer>
+                      </blockquote>
+                    )}
+                  </div>
                 )}
-                {!incomplete(item.metrica.rotulo) && <span>{item.metrica.rotulo}</span>}
-              </div>
-              <div className="case-text">{!incomplete(item.texto) && <p>{item.texto}</p>}</div>
-              <div className="before-after">
-                <div>
-                  <span>Antes</span>
-                  <MediaFrame value={item.antes_depois.antes} label="Antes" area={item.area} />
-                </div>
-                <div>
-                  <span>Depois</span>
-                  <MediaFrame value={item.antes_depois.depois} label="Depois" area={item.area} />
-                </div>
-              </div>
-              {!incomplete(item.video) && (
-                <video
-                  controls
-                  preload="none"
-                  poster="/video-poster.svg"
-                  onPlay={() =>
-                    trackEvent('interacao_casos', { area: item.area, acao: 'reproduzir_video' })
-                  }
-                >
-                  <source src={item.video} />
-                  Seu navegador não consegue reproduzir este vídeo.
-                </video>
-              )}
-              {!incomplete(item.depoimento.texto) && (
-                <blockquote>
-                  <b>“</b>
-                  <p>{item.depoimento.texto}</p>
-                  <footer>
-                    {item.depoimento.autor}, {item.depoimento.cargo}, {item.cliente}
-                  </footer>
-                </blockquote>
-              )}
-              {incomplete(item.video) && (
-                <span className="sr-only">
-                  <Play size={16} /> Vídeo não publicado
-                </span>
-              )}
-            </article>
-          ))}
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>

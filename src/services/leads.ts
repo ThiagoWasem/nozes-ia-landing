@@ -6,7 +6,7 @@ export interface LeadInput {
   whatsapp: string
   segmento: string
   consentimento_lgpd: true
-  origem: 'formulario'
+  origem: string
   variante_hero: 'A' | 'B'
 }
 
@@ -15,6 +15,7 @@ export interface LeadFieldErrors {
   empresa?: string
   whatsapp?: string
   segmento?: string
+  problema?: string
   consentimento_lgpd?: string
   formulario?: string
 }
@@ -24,6 +25,7 @@ const mensagens: Record<string, string> = {
   empresa: 'Informe uma empresa com até 120 caracteres.',
   whatsapp: 'Revise o WhatsApp informado.',
   segmento: 'Selecione um segmento válido.',
+  problema: 'Selecione o problema que mais pesa hoje.',
   consentimento_lgpd: 'O consentimento é obrigatório para solicitar o diagnóstico.',
 }
 

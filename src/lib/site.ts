@@ -17,10 +17,20 @@ export const HERO_COPY: Record<HeroVariant, { title: string; cta: string; visual
   },
 }
 
-// PONTO DE TROCA: substitua pelo número real da Nozes Ink, com DDI e DDD, sem símbolos.
-export const WHATSAPP_NUMERO = '5547999999999'
-export const WHATSAPP_MENSAGEM = 'Olá! Quero solicitar meu diagnóstico digital gratuito.'
+// PONTO DE TROCA: constante do WhatsApp atualizada com o número oficial da Nozes Ink (+55 47 8839-2501).
+export const WHATSAPP_NUMERO = '554788392501'
+export const WHATSAPP_MENSAGEM =
+  'Olá! Vi o site da Nozes Ink e quero descobrir onde meu negócio está perdendo clientes no digital. Podem me ajudar com o diagnóstico gratuito?'
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(WHATSAPP_MENSAGEM)}`
+
+// REDES SOCIAIS OFICIAIS E ENDEREÇO DA NOZES INK
+export const REDES_SOCIAIS = {
+  instagram: 'https://www.instagram.com/nozesink/',
+  facebook: 'https://www.facebook.com/profile.php?id=61595084103815&locale=pt_BR',
+  tiktok: 'https://www.tiktok.com/@nozes.ink',
+} as const
+
+export const ENDERECO_RODAPE = 'Rua Waldemiro José Borges, 3528, Itinga, Joinville, SC'
 
 // OBJETO CONFIG: controles centrais aprovados para a landing page.
 export const CONFIG = {
@@ -83,4 +93,33 @@ export const SEGMENTOS = [
   'Automotivo',
   'Varejo local',
   'Serviços profissionais',
+  'Outro',
+] as const
+
+export const PROBLEMAS = [
+  {
+    rotulo: 'Orçamento demora',
+    apoio: 'Orçamentos lentos costumam significar vendas perdidas para quem responde antes.',
+  },
+  {
+    rotulo: 'Catálogo desatualizado',
+    apoio: 'Catálogo sem atualização constante faz o cliente buscar alternativas mais fáceis.',
+  },
+  {
+    rotulo: 'Clientes perguntam sempre o mesmo',
+    apoio: 'Perguntas repetitivas tomam tempo precioso que poderia ser dedicado ao fechamento.',
+  },
+  {
+    rotulo: 'Não sou encontrado no Google',
+    apoio: 'Sem presença no Google, concorrentes locais capturam clientes prontos para comprar.',
+  },
+  {
+    rotulo: 'Não tenho site',
+    apoio: 'A ausência de site próprio diminui a credibilidade e a conversão de novos contatos.',
+  },
+  {
+    rotulo: 'Outro',
+    apoio:
+      'Identificar o gargalo específico é o primeiro passo para parar de perder oportunidades.',
+  },
 ] as const
