@@ -3,7 +3,14 @@ import { Link, useLocation } from 'react-router-dom'
 import { MessageCircle, MapPin, ExternalLink } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { DiagnosticCtaButton } from '@/components/DiagnosticCtaButton'
-import { CONFIG, WHATSAPP_URL, REDES_SOCIAIS, ENDERECO_RODAPE, MAPS_EMBED_URL } from '@/lib/site'
+import {
+  CONFIG,
+  WHATSAPP_URL,
+  REDES_SOCIAIS,
+  ENDERECO_RODAPE,
+  MAPS_EMBED_URL,
+  MAPS_PLACE_ID,
+} from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
 
 interface LayoutProps {
@@ -71,9 +78,17 @@ export function Layout({ children }: LayoutProps) {
     }
   }, [])
 
+  // Determina URL de embed: usa MAPS_EMBED_URL ou monta via Place ID se preenchido
+  const resolvedMapsEmbedUrl =
+    MAPS_EMBED_URL && MAPS_EMBED_URL.trim().length > 0
+      ? MAPS_EMBED_URL
+      : MAPS_PLACE_ID && MAPS_PLACE_ID.trim().length > 0
+        ? `https://www.google.com/maps?q=place_id:${MAPS_PLACE_ID}&output=embed`
+        : ''
+
   // Lazy loading do iframe do mapa via IntersectionObserver
   useEffect(() => {
-    if (!MAPS_EMBED_URL || !mapContainerRef.current) return
+    if (!resolvedMapsEmbedUrl || !mapContainerRef.current) return
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -89,7 +104,7 @@ export function Layout({ children }: LayoutProps) {
 
     observer.observe(mapContainerRef.current)
     return () => observer.disconnect()
-  }, [])
+  }, [resolvedMapsEmbedUrl])
 
   // Suporte a âncoras na URL
   useEffect(() => {
@@ -313,21 +328,21 @@ export function Layout({ children }: LayoutProps) {
             </div>
           </div>
 
-          {/* Coluna 4: Mapa Google Maps (somente quando MAPS_EMBED_URL preenchido) */}
+          {/* Coluna 4: Mapa Google Maps (centralizado no negócio via Place ID) */}
           <div className="footer-col col-map" ref={mapContainerRef}>
             <p className="footer-label">Localização no mapa</p>
-            {MAPS_EMBED_URL && MAPS_EMBED_URL.trim().length > 0 ? (
+            {resolvedMapsEmbedUrl ? (
               loadMap ? (
                 <iframe
-                  src={MAPS_EMBED_URL}
-                  title="Localização da Nozes Ink em Joinville, SC"
+                  src={resolvedMapsEmbedUrl}
+                  title="Localização oficial da Nozes Ink em Joinville, SC"
                   loading="lazy"
                   referrerPolicy="strict-origin-when-cross-origin"
                   className="footer-map-frame"
                 />
               ) : (
                 <div className="footer-map-skeleton">
-                  <span>Carregando mapa...</span>
+                  <span>Carregando mapa da Nozes Ink...</span>
                 </div>
               )
             ) : (

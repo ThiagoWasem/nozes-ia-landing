@@ -387,21 +387,21 @@ function ShortDiagnosticForm() {
             }
             disabled={loading}
           />
-          <span aria-hidden="true">
+          <span className="checkbox-visual" aria-hidden="true">
             <Check size={14} />
           </span>
-          <span className="consent-text">
-            Concordo em receber contato sobre o diagnóstico.{' '}
-            <Link
-              to="/politica-de-privacidade"
-              target="_blank"
-              rel="noreferrer"
-              className="privacy-inline-link"
-            >
-              Política de privacidade
-            </Link>
-          </span>
+          <span className="consent-text">Concordo em receber contato sobre o diagnóstico.</span>
         </label>
+        <div className="consent-policy-link-wrapper">
+          <Link
+            to="/politica-de-privacidade"
+            target="_blank"
+            rel="noreferrer"
+            className="privacy-inline-link"
+          >
+            Ler nossa Política de Privacidade (LGPD)
+          </Link>
+        </div>
         {errors.consentimento_lgpd && (
           <small
             id="short-consentimento_lgpd-error"
@@ -901,21 +901,23 @@ function SteppedDiagnosticForm() {
                   }
                   disabled={loading}
                 />
-                <span aria-hidden="true">
+                <span className="checkbox-visual" aria-hidden="true">
                   <Check size={14} />
                 </span>
                 <span className="consent-text">
-                  Concordo em receber contato sobre o diagnóstico.{' '}
-                  <Link
-                    to="/politica-de-privacidade"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="privacy-inline-link"
-                  >
-                    Política de privacidade
-                  </Link>
+                  Concordo em receber contato sobre o diagnóstico.
                 </span>
               </label>
+              <div className="consent-policy-link-wrapper">
+                <Link
+                  to="/politica-de-privacidade"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="privacy-inline-link"
+                >
+                  Ler nossa Política de Privacidade (LGPD)
+                </Link>
+              </div>
               {errors.consentimento_lgpd && (
                 <small id="step-consentimento_lgpd-error" className="field-error checkbox-error">
                   {errors.consentimento_lgpd}

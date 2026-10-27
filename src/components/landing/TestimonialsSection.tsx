@@ -181,17 +181,22 @@ export function TestimonialsSection() {
               const rating =
                 typeof item.nota === 'number' && item.nota > 0 ? Math.min(item.nota, 5) : 0
 
+              // Determina se o card está na visão ativa
+              const isVisibleInWindow = index >= currentIndex && index < currentIndex + cardsPerView
+              const isFirstInWindow = index === currentIndex
               return (
                 <div
                   key={`${item.empresa}-${index}`}
-                  className="testimonial-slide"
+                  className={`testimonial-slide ${isVisibleInWindow ? 'is-in-view' : 'is-off-view'} ${isFirstInWindow ? 'is-spotlight' : ''}`}
                   style={{ flex: `0 0 ${stepPercent}%`, maxWidth: `${stepPercent}%` }}
                 >
                   <article className="testimonial-card">
                     <div className="testimonial-card-top-glow" aria-hidden="true" />
+                    <div className="testimonial-card-shimmer" aria-hidden="true" />
                     <div className="testimonial-header">
                       <div className="testimonial-avatar" aria-hidden="true">
                         <span>{initial}</span>
+                        <div className="testimonial-avatar-ring" />
                       </div>
                       <div className="testimonial-meta">
                         <h3 className="testimonial-company">{item.empresa}</h3>
@@ -216,6 +221,7 @@ export function TestimonialsSection() {
                             aria-hidden="true"
                           />
                         ))}
+                        <span className="stars-badge">5.0</span>
                       </div>
                     )}
 

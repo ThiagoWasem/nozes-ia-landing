@@ -332,31 +332,51 @@ export function FeaturesSection() {
           description="A implementação muda. O critério não."
         />
         <div className="bento-grid">
-          {features.map(({ title, benefit, entregamos, icon: Icon, size, demo }) => (
-            <article className={`feature-card feature-${size}`} data-scroll-card key={title}>
-              <div className="feature-top-bar">
-                <div className="feature-icon">
-                  <Icon size={20} aria-hidden="true" />
+          {features.map(({ title, benefit, entregamos, icon: Icon, size, demo }) => {
+            const hasSideVisual =
+              demo === 'calendar' ||
+              demo === 'messages' ||
+              demo === 'browser' ||
+              demo === 'portfolio' ||
+              demo === 'crm'
+            return (
+              <article
+                className={`feature-card feature-${size} ${demo ? `card-with-${demo}` : ''}`}
+                data-scroll-card
+                key={title}
+              >
+                <div className="feature-top-bar">
+                  <div className="feature-icon">
+                    <Icon size={20} aria-hidden="true" />
+                  </div>
                 </div>
-                <FeatureVisual demo={demo} />
-              </div>
-              <div className="feature-copy">
-                <h3>{title}</h3>
-                <p className="feature-benefit">{benefit}</p>
-                <div className="feature-deliverables">
-                  <span className="deliverables-title">O que entregamos:</span>
-                  <ul>
-                    {entregamos.map((item) => (
-                      <li key={item}>
-                        <Check size={13} aria-hidden="true" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+
+                <div className="feature-body-layout">
+                  <div className="feature-copy">
+                    <h3>{title}</h3>
+                    <p className="feature-benefit">{benefit}</p>
+                    <div className="feature-deliverables">
+                      <span className="deliverables-title">O que entregamos:</span>
+                      <ul>
+                        {entregamos.map((item) => (
+                          <li key={item}>
+                            <Check size={13} aria-hidden="true" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {demo && (
+                    <div className="feature-demo-container">
+                      <FeatureVisual demo={demo} />
+                    </div>
+                  )}
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>
