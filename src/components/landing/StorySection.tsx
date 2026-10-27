@@ -149,13 +149,23 @@ export function StorySection() {
     return () => observer.disconnect()
   }, [])
 
-  // Loop contínuo automático de 3 etapas
+  // Motor rAF contínuo com ritmo acelerado e fluido (~1,9s por etapa)
   useEffect(() => {
     if (reduced || isPaused || !isVisible) return
-    const interval = window.setInterval(() => {
-      setStep((prev) => (prev >= 3 ? 1 : prev + 1))
-    }, 3400)
-    return () => window.clearInterval(interval)
+
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1900) {
+        lastTick = now
+        setStep((prev) => (prev >= 3 ? 1 : prev + 1))
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
   }, [reduced, isPaused, isVisible])
 
   if (!CONFIG.sticky_storytelling_ativo) return null

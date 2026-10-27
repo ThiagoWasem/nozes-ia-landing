@@ -53,13 +53,23 @@ export function MethodSection() {
     return () => observer.disconnect()
   }, [])
 
-  // Loop automático contínuo
+  // Motor rAF contínuo acelerado para transição viva e fluida (~1,7s por fase)
   useEffect(() => {
     if (reduced || isPaused || !isVisible) return
-    const interval = window.setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % steps.length)
-    }, 2800)
-    return () => window.clearInterval(interval)
+
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1700) {
+        lastTick = now
+        setActiveStep((prev) => (prev + 1) % steps.length)
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
   }, [reduced, isPaused, isVisible])
 
   // Progresso de 0 a 1 para a linha dourada

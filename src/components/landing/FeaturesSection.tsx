@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Bot,
   CalendarDays,
@@ -8,8 +8,6 @@ import {
   Globe2,
   LayoutTemplate,
   MessageCircle,
-  Pause,
-  Play,
   RefreshCw,
   Rows3,
   Sparkles,
@@ -39,20 +37,51 @@ import { SectionHeading } from './SectionHeading'
      7. Presença no Google
    ========================================================================== */
 
-function CalendarDemo() {
+/* ==========================================================================
+   MINI MOCKUPS / DEMONSTRAÇÕES ANIMADAS GENÉRICAS DO BENTO GRID
+   - Todos os 7 cards com mockups animados padronizados e visual coeso.
+   - Rótulo "Demonstração ilustrativa" removido de todos os cards.
+   - Animação em requestAnimationFrame contínuo, pausada fora da viewport.
+   - Apenas transform e opacity (GPU-friendly).
+   ========================================================================== */
+
+function CalendarDemo({ isInView }: { isInView: boolean }) {
+  const reduced = useReducedMotion()
+  const [activeDay, setActiveDay] = useState(17)
+
+  useEffect(() => {
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+    const days = [11, 14, 16, 17, 19, 20]
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1600) {
+        lastTick = now
+        setActiveDay((prev) => {
+          const nextIdx = (days.indexOf(prev) + 1) % days.length
+          return days[nextIdx]
+        })
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
+
   return (
-    <div className="calendar-demo" aria-label="Demonstração ilustrativa de agendamento">
-      <span className="mini-demo-label">Demonstração ilustrativa</span>
+    <div className="bento-mockup calendar-demo" aria-label="Visualização de agendamento integrado">
       <div className="calendar-demo-grid">
         {[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((day) => (
-          <span className={day === 17 ? 'is-free' : ''} key={day}>
+          <span className={day === activeDay ? 'is-free' : ''} key={day}>
             {day}
           </span>
         ))}
       </div>
       <div className="sync-flow" aria-hidden="true">
         <span className="slot-pill">
-          <Check size={13} /> 14:00
+          <Check size={13} /> {activeDay === 17 ? '14:00' : '10:30'}
         </span>
         <RefreshCw className="sync-glyph" size={18} />
         <span className="calendar-outline">
@@ -63,41 +92,29 @@ function CalendarDemo() {
   )
 }
 
-function WhatsAppDemo() {
+function WhatsAppDemo({ isInView }: { isInView: boolean }) {
   const reduced = useReducedMotion()
   const [step, setStep] = useState(reduced ? 3 : 1)
-  const [isPaused, setIsPaused] = useState(false)
 
   useEffect(() => {
-    if (reduced || isPaused) return
-    const interval = window.setInterval(() => {
-      setStep((s) => (s >= 3 ? 1 : s + 1))
-    }, 2200)
-    return () => window.clearInterval(interval)
-  }, [reduced, isPaused])
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1800) {
+        lastTick = now
+        setStep((s) => (s >= 3 ? 1 : s + 1))
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
 
   return (
-    <div className="whatsapp-card-demo" aria-label="Demonstração ilustrativa de atendimento">
-      <div className="whatsapp-card-demo-header">
-        <span className="mini-demo-label">Demonstração ilustrativa</span>
-        {!reduced && (
-          <button
-            type="button"
-            className="mini-demo-pause-btn"
-            onClick={() => setIsPaused((p) => !p)}
-            aria-label={
-              isPaused ? 'Retomar demonstração de WhatsApp' : 'Pausar demonstração de WhatsApp'
-            }
-            title={isPaused ? 'Retomar' : 'Pausar'}
-          >
-            {isPaused ? (
-              <Play size={10} aria-hidden="true" />
-            ) : (
-              <Pause size={10} aria-hidden="true" />
-            )}
-          </button>
-        )}
-      </div>
+    <div className="bento-mockup whatsapp-card-demo" aria-label="Visualização de fluxo de WhatsApp">
       <div className="messages-stream" aria-hidden="true">
         <div className={`message-bubble bubble-client ${step >= 1 ? 'is-visible' : ''}`}>
           <span>Qual o valor do projeto?</span>
@@ -124,27 +141,31 @@ const ORBIT_ITEMS = [
   { id: 'react', label: 'React / Web', icon: Code2, angle: 300 },
 ]
 
-function CatalogDemo() {
+function CatalogDemo({ isInView }: { isInView: boolean }) {
   const reduced = useReducedMotion()
-  const [isPaused, setIsPaused] = useState(false)
   const [activeItem, setActiveItem] = useState(0)
 
-  // Rotação visual suave com pausa no hover ou clique
   useEffect(() => {
-    if (reduced || isPaused) return
-    const interval = window.setInterval(() => {
-      setActiveItem((prev) => (prev + 1) % ORBIT_ITEMS.length)
-    }, 2800)
-    return () => window.clearInterval(interval)
-  }, [reduced, isPaused])
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1700) {
+        lastTick = now
+        setActiveItem((prev) => (prev + 1) % ORBIT_ITEMS.length)
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
 
   return (
     <div
-      className="catalog-demo"
+      className="bento-mockup catalog-demo"
       aria-label="Capacidades de tecnologia e IA do catálogo"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused((p) => !p)}
     >
       <div className="catalog-radar-grid" aria-hidden="true">
         <div className="radar-circle circle-outer" />
@@ -180,6 +201,183 @@ function CatalogDemo() {
   )
 }
 
+/* Mockup animado padronizado para Sites e Landing Pages */
+function BrowserDemo({ isInView }: { isInView: boolean }) {
+  const reduced = useReducedMotion()
+  const [pulseIndex, setPulseIndex] = useState(0)
+
+  useEffect(() => {
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1400) {
+        lastTick = now
+        setPulseIndex((prev) => (prev + 1) % 3)
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
+
+  return (
+    <div className="bento-mockup browser-mockup-deluxe" aria-hidden="true">
+      <div className="browser-deluxe-bar">
+        <span className="dot dot-red" />
+        <span className="dot dot-yellow" />
+        <span className="dot dot-green" />
+        <span className="browser-url-pill">nozesink.com.br</span>
+      </div>
+      <div className="browser-deluxe-canvas">
+        <div className={`hero-wireframe ${pulseIndex === 0 ? 'is-active' : ''}`}>
+          <span className="wire-headline" />
+          <span className="wire-sub" />
+          <span className="wire-cta" />
+        </div>
+        <div className="browser-wire-cards">
+          <div className={`wire-card ${pulseIndex === 1 ? 'is-active' : ''}`} />
+          <div className={`wire-card ${pulseIndex === 2 ? 'is-active' : ''}`} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* Mockup animado padronizado para Portfólios Digitais */
+function PortfolioDemo({ isInView }: { isInView: boolean }) {
+  const reduced = useReducedMotion()
+  const [focusedCard, setFocusedCard] = useState(1)
+
+  useEffect(() => {
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1600) {
+        lastTick = now
+        setFocusedCard((prev) => (prev + 1) % 3)
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
+
+  return (
+    <div className="bento-mockup portfolio-mockup-deluxe" aria-hidden="true">
+      {[0, 1, 2].map((idx) => {
+        const isFocused = idx === focusedCard
+        return (
+          <div
+            key={idx}
+            className={`portfolio-card-item card-${idx} ${isFocused ? 'is-focused' : ''}`}
+          >
+            <div className="portfolio-thumb-inner" />
+            <span className="portfolio-label-line" />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/* Mockup animado padronizado para CRM e Acompanhamento de Leads */
+function CrmDemo({ isInView }: { isInView: boolean }) {
+  const reduced = useReducedMotion()
+  const [leadStage, setLeadStage] = useState(1)
+
+  useEffect(() => {
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1500) {
+        lastTick = now
+        setLeadStage((prev) => (prev >= 3 ? 1 : prev + 1))
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
+
+  return (
+    <div className="bento-mockup crm-mockup-deluxe" aria-hidden="true">
+      <div className="crm-kanban-cols">
+        <div className="crm-col">
+          <span className="crm-col-header">Novo contato</span>
+          <div className={`crm-card ${leadStage === 1 ? 'is-lead-active' : ''}`}>
+            <strong>Roberto S.</strong>
+            <small>Orçamento balcão</small>
+          </div>
+        </div>
+        <div className="crm-col">
+          <span className="crm-col-header">Em conversa</span>
+          <div className={`crm-card ${leadStage === 2 ? 'is-lead-active' : ''}`}>
+            <strong>Carla M.</strong>
+            <small>Visita técnica</small>
+          </div>
+        </div>
+        <div className="crm-col">
+          <span className="crm-col-header">Proposta ganha</span>
+          <div className={`crm-card ${leadStage === 3 ? 'is-lead-active' : ''}`}>
+            <strong>Juliano P.</strong>
+            <small className="gain-label">Fechado R$ 4.200</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* Mockup animado padronizado para Presença no Google */
+function GoogleSearchDemo({ isInView }: { isInView: boolean }) {
+  const reduced = useReducedMotion()
+  const [badgeGlow, setBadgeGlow] = useState(true)
+
+  useEffect(() => {
+    if (reduced || !isInView) return
+    let lastTick = performance.now()
+    let frameId: number
+
+    const tick = (now: number) => {
+      if (now - lastTick >= 1400) {
+        lastTick = now
+        setBadgeGlow((prev) => !prev)
+      }
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [reduced, isInView])
+
+  return (
+    <div className="bento-mockup google-mockup-deluxe" aria-hidden="true">
+      <div className="google-result-item">
+        <div className="google-avatar-icon">G</div>
+        <div className="google-result-info">
+          <span className="google-place-name">Sua Empresa no Maps</span>
+          <div className="google-stars-row">
+            <span className="stars-fill">★★★★★</span>
+            <span className="stars-score">5.0 (128 avaliações)</span>
+          </div>
+          <span className={`google-badge-status ${badgeGlow ? 'glow' : ''}`}>
+            ✓ Verificado & Aberto agora
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 interface FeatureItem {
   title: string
   benefit: string
@@ -190,7 +388,7 @@ interface FeatureItem {
     'aria-hidden'?: boolean | 'true' | 'false'
   }>
   size: 'wide' | 'small' | 'tall' | 'large' | 'medium'
-  demo?: string
+  demoType: 'browser' | 'portfolio' | 'catalog' | 'calendar' | 'messages' | 'crm' | 'google'
 }
 
 const features: FeatureItem[] = [
@@ -204,7 +402,7 @@ const features: FeatureItem[] = [
     ],
     icon: LayoutTemplate,
     size: 'wide',
-    demo: 'browser',
+    demoType: 'browser',
   },
   {
     title: 'Portfólios digitais',
@@ -216,7 +414,7 @@ const features: FeatureItem[] = [
     ],
     icon: Rows3,
     size: 'small',
-    demo: 'portfolio',
+    demoType: 'portfolio',
   },
   {
     title: 'Catálogos digitais',
@@ -228,7 +426,7 @@ const features: FeatureItem[] = [
     ],
     icon: Code2,
     size: 'tall',
-    demo: 'catalog',
+    demoType: 'catalog',
   },
   {
     title: 'Agendamento com Google Calendar',
@@ -240,7 +438,7 @@ const features: FeatureItem[] = [
     ],
     icon: CalendarDays,
     size: 'large',
-    demo: 'calendar',
+    demoType: 'calendar',
   },
   {
     title: 'Atendimento e automação no WhatsApp',
@@ -252,7 +450,7 @@ const features: FeatureItem[] = [
     ],
     icon: MessageCircle,
     size: 'medium',
-    demo: 'messages',
+    demoType: 'messages',
   },
   {
     title: 'CRM e acompanhamento de leads',
@@ -264,7 +462,7 @@ const features: FeatureItem[] = [
     ],
     icon: UserRoundSearch,
     size: 'wide',
-    demo: 'crm',
+    demoType: 'crm',
   },
   {
     title: 'Presença no Google',
@@ -276,55 +474,55 @@ const features: FeatureItem[] = [
     ],
     icon: Globe2,
     size: 'wide',
-    demo: 'browser',
+    demoType: 'google',
   },
 ]
 
-function FeatureVisual({ demo }: { demo?: string }) {
-  if (demo === 'calendar') return <CalendarDemo />
-  if (demo === 'catalog') return <CatalogDemo />
-  if (demo === 'browser') {
-    return (
-      <div className="browser-mini" aria-hidden="true">
-        <span />
-        <div>
-          <b />
-          <b />
-          <b />
-        </div>
-      </div>
-    )
-  }
-  if (demo === 'portfolio') {
-    return (
-      <div className="portfolio-mini" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
-    )
-  }
-  if (demo === 'messages') {
-    return <WhatsAppDemo />
-  }
-  if (demo === 'crm') {
-    return (
-      <div className="crm-mini" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <i />
-      </div>
-    )
-  }
+function FeatureVisual({
+  demoType,
+  isInView,
+}: {
+  demoType: FeatureItem['demoType']
+  isInView: boolean
+}) {
+  if (demoType === 'calendar') return <CalendarDemo isInView={isInView} />
+  if (demoType === 'catalog') return <CatalogDemo isInView={isInView} />
+  if (demoType === 'browser') return <BrowserDemo isInView={isInView} />
+  if (demoType === 'portfolio') return <PortfolioDemo isInView={isInView} />
+  if (demoType === 'messages') return <WhatsAppDemo isInView={isInView} />
+  if (demoType === 'crm') return <CrmDemo isInView={isInView} />
+  if (demoType === 'google') return <GoogleSearchDemo isInView={isInView} />
   return null
 }
 
 export function FeaturesSection() {
+  const [isInView, setIsInView] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting)
+        })
+      },
+      { threshold: 0.1 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   if (CONFIG.modo_funcionalidades !== 'bento') return null
 
   return (
-    <section className="section features-section" data-features aria-labelledby="features-title">
+    <section
+      ref={sectionRef}
+      className="section features-section"
+      data-features
+      aria-labelledby="features-title"
+    >
       <div className="shell">
         <SectionHeading
           eyebrow="Soluções digitais"
@@ -332,16 +530,10 @@ export function FeaturesSection() {
           description="A implementação muda. O critério não."
         />
         <div className="bento-grid">
-          {features.map(({ title, benefit, entregamos, icon: Icon, size, demo }) => {
-            const hasSideVisual =
-              demo === 'calendar' ||
-              demo === 'messages' ||
-              demo === 'browser' ||
-              demo === 'portfolio' ||
-              demo === 'crm'
+          {features.map(({ title, benefit, entregamos, icon: Icon, size, demoType }) => {
             return (
               <article
-                className={`feature-card feature-${size} ${demo ? `card-with-${demo}` : ''}`}
+                className={`feature-card feature-${size} card-with-${demoType}`}
                 data-scroll-card
                 key={title}
               >
@@ -368,11 +560,9 @@ export function FeaturesSection() {
                     </div>
                   </div>
 
-                  {demo && (
-                    <div className="feature-demo-container">
-                      <FeatureVisual demo={demo} />
-                    </div>
-                  )}
+                  <div className="feature-demo-container">
+                    <FeatureVisual demoType={demoType} isInView={isInView} />
+                  </div>
                 </div>
               </article>
             )

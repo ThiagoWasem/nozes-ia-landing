@@ -12,7 +12,6 @@ export function useLandingMotion() {
 
     const render = () => {
       frame = 0
-      const reduced = reducedQuery.matches
       const viewport = window.innerHeight
       const pageRange = document.documentElement.scrollHeight - viewport
       const pageProgress = pageRange > 0 ? window.scrollY / pageRange : 0
@@ -26,17 +25,11 @@ export function useLandingMotion() {
         trackEvent('rolagem_90')
       }
 
-      // CARDS DO BENTO: Revelação suave de entrada apenas (sem travar conteúdo)
-      document.querySelectorAll<HTMLElement>('[data-scroll-card]').forEach((card) => {
-        const rect = card.getBoundingClientRect()
-        if (rect.bottom > 0 && rect.top < viewport) {
-          const progress = reduced
-            ? 1
-            : clamp((viewport * 0.95 - rect.top) / Math.max(viewport * 0.35, 1))
-          card.style.opacity = String(Math.max(0.3, progress))
-          card.style.transform = `scale(${0.98 + progress * 0.02}) translate3d(0, ${(1 - progress) * 8}px, 0)`
-        }
-      })
+      // Atualiza a barra de leitura global se existir
+      const readingBar = document.querySelector<HTMLElement>('.reading-progress-bar')
+      if (readingBar) {
+        readingBar.style.setProperty('--scroll-progress', `${Math.round(pageProgress * 100)}%`)
+      }
     }
 
     const requestRender = () => {

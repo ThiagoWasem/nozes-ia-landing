@@ -94,31 +94,72 @@ export default function Index() {
           </a>
         </section>
 
+        {/* Transição cinematográfica: Hero (offwhite) -> Raio-X */}
+        <div className="cinematic-divider divider-hero-to-raiox" aria-hidden="true">
+          <div className="cinematic-curtain" />
+        </div>
+
         {/* 2. PROBLEMA (Raio-X) */}
         <div id="raiox">
           <RaioxSection />
         </div>
 
+        {/* Transição cinematográfica: Raio-X -> Método Gargalo */}
+        <div className="cinematic-divider divider-raiox-to-method" aria-hidden="true">
+          <div className="cinematic-curtain" />
+        </div>
+
         {/* 3. MÉTODO GARGALO */}
         <MethodSection />
 
-        {/* 4. SOLUÇÕES DIGITAIS (bento grid) */}
+        {/* Transição cinematográfica profunda: Método -> Bento (consumindo a tela com degradê escuro) */}
+        <div className="cinematic-divider divider-to-graphite" aria-hidden="true">
+          <div className="cinematic-gradient-dark" />
+          <div className="cinematic-glow-beam" />
+        </div>
+
+        {/* 4. SOLUÇÕES DIGITAIS (bento grid - fundo graphite #1B1C1B) */}
         <FeaturesSection />
 
-        {/* 5. STORYTELLING (sticky desktop) */}
+        {/* Transição cinematográfica: Bento (graphite) -> Storytelling (evergreen #1F3B33) */}
+        <div className="cinematic-divider divider-graphite-to-evergreen" aria-hidden="true">
+          <div className="cinematic-curtain" />
+        </div>
+
+        {/* 5. STORYTELLING (evergreen #1F3B33) */}
         <StorySection />
 
-        {/* 6. PARA QUEM É */}
+        {/* Transição cinematográfica: Storytelling -> Para Quem É */}
+        <div className="cinematic-divider divider-evergreen-seamless" aria-hidden="true">
+          <div className="cinematic-gold-seam" />
+        </div>
+
+        {/* 6. PARA QUEM É (evergreen #1F3B33) */}
         <AudienceSection />
 
-        {/* 7. O QUE NOSSOS CLIENTES DIZEM (DEPOIMENTOS_VISIVEIS = true) */}
+        {/* Transição cinematográfica: Para Quem É (escuro) -> Depoimentos (claro #F2F0EA) */}
+        <div className="cinematic-divider divider-dark-to-light" aria-hidden="true">
+          <div className="cinematic-curtain-light" />
+        </div>
+
+        {/* 7. O QUE NOSSOS CLIENTES DIZEM (DEPOIMENTOS_VISIVEIS = true, claro #F2F0EA) */}
         <TestimonialsSection />
 
-        {/* CTA intermediário */}
+        {/* Transição cinematográfica: Depoimentos (claro) -> MidCta (evergreen) */}
+        <div className="cinematic-divider divider-light-to-dark" aria-hidden="true">
+          <div className="cinematic-curtain-dark" />
+        </div>
+
+        {/* CTA intermediário (evergreen) */}
         <MidCta />
 
         {/* 8. CASOS REAIS (oculto enquanto CASOS_VISIVEIS = false) */}
         <CasesSection />
+
+        {/* Transição suave para a área de diagnóstico */}
+        <div className="cinematic-divider divider-to-form" aria-hidden="true">
+          <div className="cinematic-curtain-light" />
+        </div>
 
         {/* 9. DIAGNÓSTICO (formulário padrão curto; 3 etapas preparado para teste A/B) */}
         <section className="final-cta" id="diagnostico" aria-labelledby="diagnostico-title">

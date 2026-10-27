@@ -227,131 +227,152 @@ export function Layout({ children }: LayoutProps) {
 
       <div id="conteudo">{children}</div>
 
-      {/* RODAPÉ OFICIAL: 4 colunas desktop, 2 tablet, 1 mobile. Fundo evergreen, logo Off-White */}
+      {/* RODAPÉ OFICIAL: Redesign clean, profissional e refinado */}
       <footer className="site-footer" data-reveal>
+        <div className="shell footer-top-accent" aria-hidden="true">
+          <span className="accent-line" />
+        </div>
         <div className="shell footer-grid-4">
           {/* Coluna 1: Marca e posicionamento */}
           <div className="footer-col col-brand">
             <Logo variant="horizontal" tone="light" className="footer-logo" />
             <p className="footer-positioning">Diagnóstico antes da solução.</p>
+            <p className="footer-summary-tag">
+              Inteligência de processo, IA prática e soluções digitais sob medida para negócios
+              locais.
+            </p>
           </div>
 
           {/* Coluna 2: Contato e Localização */}
           <div className="footer-col col-contact">
-            <p className="footer-label">Contato e Localização</p>
-            <p className="footer-address">
-              <MapPin size={16} aria-hidden="true" className="inline-icon" />
-              <span>{ENDERECO_RODAPE}</span>
-            </p>
+            <h3 className="footer-label">Contato e Localização</h3>
+            <div className="footer-address-card">
+              <MapPin size={18} aria-hidden="true" className="footer-pin-icon" />
+              <div className="address-text">
+                <strong>Joinville / SC</strong>
+                <span>{ENDERECO_RODAPE}</span>
+              </div>
+            </div>
             <div className="footer-contact-actions">
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="footer-whatsapp-link"
+                className="footer-action-link whatsapp"
                 onClick={() => trackEvent('clique_whatsapp', { origem: 'rodape' })}
               >
-                <MessageCircle size={17} aria-hidden="true" /> Conversar no WhatsApp
+                <MessageCircle size={16} aria-hidden="true" /> Conversar no WhatsApp
               </a>
               <a
                 href={mapsSearchUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="footer-maps-link"
+                className="footer-action-link maps"
                 onClick={() => trackEvent('clique_abrir_maps')}
               >
-                <ExternalLink size={15} aria-hidden="true" /> Abrir no Google Maps
+                <ExternalLink size={14} aria-hidden="true" /> Abrir no Google Maps
               </a>
             </div>
           </div>
 
           {/* Coluna 3: Redes sociais oficiais */}
           <div className="footer-col col-social">
-            <p className="footer-label">Redes sociais</p>
+            <h3 className="footer-label">Redes sociais</h3>
+            <p className="footer-social-intro">
+              Acompanhe novidades, bastidores e casos reais das nossas implementações.
+            </p>
             <div className="footer-social-links">
               <a
                 href={REDES_SOCIAIS.instagram}
                 target="_blank"
                 rel="noreferrer"
-                className="social-icon-link"
-                aria-label="Instagram da Nozes Ink"
+                className="social-card-link"
+                aria-label="Instagram oficial da Nozes Ink"
                 onClick={() => trackEvent('clique_rede_social', { rede: 'instagram' })}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                </svg>
-                <span>Instagram</span>
+                <div className="social-icon-box" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                  </svg>
+                </div>
+                <div className="social-text">
+                  <span className="social-name">Instagram</span>
+                  <small className="social-handle">@nozesink</small>
+                </div>
               </a>
 
               <a
                 href={REDES_SOCIAIS.facebook}
                 target="_blank"
                 rel="noreferrer"
-                className="social-icon-link"
-                aria-label="Facebook da Nozes Ink"
+                className="social-card-link"
+                aria-label="Facebook oficial da Nozes Ink"
                 onClick={() => trackEvent('clique_rede_social', { rede: 'facebook' })}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                <span>Facebook</span>
+                <div className="social-icon-box" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                </div>
+                <div className="social-text">
+                  <span className="social-name">Facebook</span>
+                  <small className="social-handle">Nozes Ink</small>
+                </div>
               </a>
 
               <a
                 href={REDES_SOCIAIS.tiktok}
                 target="_blank"
                 rel="noreferrer"
-                className="social-icon-link"
-                aria-label="TikTok da Nozes Ink"
+                className="social-card-link"
+                aria-label="TikTok oficial da Nozes Ink"
                 onClick={() => trackEvent('clique_rede_social', { rede: 'tiktok' })}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.94-4.52V8.75a8.23 8.23 0 0 0 4.83 1.57V6.87a4.85 4.85 0 0 1-1-.18z" />
-                </svg>
-                <span>TikTok</span>
+                <div className="social-icon-box" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.94-4.52V8.75a8.23 8.23 0 0 0 4.83 1.57V6.87a4.85 4.85 0 0 1-1-.18z" />
+                  </svg>
+                </div>
+                <div className="social-text">
+                  <span className="social-name">TikTok</span>
+                  <small className="social-handle">@nozesink</small>
+                </div>
               </a>
             </div>
           </div>
 
-          {/* Coluna 4: Mapa Google Maps (centralizado no negócio via Place ID) */}
+          {/* Coluna 4: Mapa Google Maps (lazy via Place ID ChIJOSAiDO623pQRNIFx22W5Ix4) */}
           <div className="footer-col col-map" ref={mapContainerRef}>
-            <p className="footer-label">Localização no mapa</p>
+            <div className="footer-map-header">
+              <h3 className="footer-label">Localização no mapa</h3>
+              <span className="map-badge">Joinville / SC</span>
+            </div>
             {resolvedMapsEmbedUrl ? (
               loadMap ? (
-                <iframe
-                  src={resolvedMapsEmbedUrl}
-                  title="Localização oficial da Nozes Ink em Joinville, SC"
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  className="footer-map-frame"
-                />
+                <div className="footer-map-wrapper">
+                  <iframe
+                    src={resolvedMapsEmbedUrl}
+                    title="Localização oficial da Nozes Ink em Joinville, SC"
+                    loading="lazy"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    className="footer-map-frame"
+                  />
+                </div>
               ) : (
                 <div className="footer-map-skeleton">
-                  <span>Carregando mapa da Nozes Ink...</span>
+                  <div className="skeleton-pulse" />
+                  <span>Carregando mapa interativo...</span>
                 </div>
               )
             ) : (
@@ -361,21 +382,27 @@ export function Layout({ children }: LayoutProps) {
                   href={mapsSearchUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="footer-maps-link"
+                  className="footer-action-link maps"
                 >
-                  <ExternalLink size={15} aria-hidden="true" /> Ver no Google Maps
+                  <ExternalLink size={14} aria-hidden="true" /> Ver no Google Maps
                 </a>
               </div>
             )}
           </div>
         </div>
 
-        {/* Barra inferior */}
+        {/* Barra inferior legal */}
         <div className="shell footer-bottom">
           <div className="footer-bottom-links">
             <Link to="/politica-de-privacidade">Política de privacidade</Link>
-            <span aria-hidden="true">•</span>
-            <span>Cookies essenciais</span>
+            <span className="sep" aria-hidden="true">
+              •
+            </span>
+            <span>Cookies</span>
+            <span className="sep" aria-hidden="true">
+              •
+            </span>
+            <span>Termos de uso</span>
           </div>
           <p>© 2026 Nozes Ink. Todos os direitos reservados.</p>
         </div>

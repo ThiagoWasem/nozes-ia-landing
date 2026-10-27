@@ -1,77 +1,108 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CalendarCheck, Check, Database, MessageCircle, Pause, Play } from 'lucide-react'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import { trackEvent } from '@/lib/analytics'
 
 /* ==========================================================================
    HERO DEMO (DEMONSTRAÇÃO ILUSTRATIVA)
-   1. Mensagem de cliente digitada sozinha, com indicador de digitação.
-   2. Em menos de 1 segundo, a IA responde e confirma um horário.
-   3. Três blocos entram em sequência:
-      - "Mensagem atendida"
-      - "Horário agendado"
-      - "Lead registrado no CRM"
-   4. Ciclo de 8 segundos, com botão visível de pausar e retomar.
-   5. Mobile: versão simplificada, sem loop contínuo.
+   - Motor de tempo único via requestAnimationFrame e tempo decorrido absoluto.
+   - Totalmente desacoplado da rolagem: quando sai da viewport, pausa; ao voltar,
+     retoma exatamente de forma fluida sem travar.
+   - Ritmo acelerado e dinâmico (~4,8s total): leitura fluida e viva.
+   - Mensagem digitada rápida, IA responde em <600ms, 3 passos de confirmação
+     entram em cascata imediata.
    ========================================================================== */
 
 const CUSTOMER_MESSAGE = 'Olá! Vocês têm horário disponível para amanhã à tarde?'
 const REPLY_MESSAGE = 'Sim! Horário confirmado para amanhã às 14h na nossa agenda.'
-const CYCLE_DURATION = 8000
+const CYCLE_DURATION = 4800
 
 export function HeroDemo() {
   const reduced = useReducedMotion()
   const [elapsed, setElapsed] = useState(reduced ? CYCLE_DURATION : 0)
   const [manualPaused, setManualPaused] = useState(false)
   const [autoPaused, setAutoPaused] = useState(false)
+  const [isInView, setIsInView] = useState(true)
   const rootRef = useRef<HTMLDivElement>(null)
+  const elapsedRef = useRef(0)
+  const lastTimeRef = useRef<number | null>(null)
+  const animFrameRef = useRef<number | null>(null)
 
-  const mobile = useMemo(
-    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches,
-    [],
-  )
+  // IntersectionObserver para pausar fora da viewport e retomar ao voltar
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting)
+        })
+      },
+      { threshold: 0.1 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
+  // Visibilidade da aba (pausar se trocar de aba)
+  const [isTabVisible, setIsTabVisible] = useState(true)
+  useEffect(() => {
+    const onVis = () => setIsTabVisible(!document.hidden)
+    document.addEventListener('visibilitychange', onVis)
+    return () => document.removeEventListener('visibilitychange', onVis)
+  }, [])
+
+  // Motor rAF com tempo decorrido absoluto contínuo
   useEffect(() => {
     if (reduced) {
       setElapsed(CYCLE_DURATION)
       return
     }
-    if (manualPaused || autoPaused) return
 
-    const timer = window.setInterval(() => {
-      setElapsed((value) => {
-        const next = value + 50
-        // Loop contínuo e fluído em todos os dispositivos
-        if (next >= CYCLE_DURATION) return 0
-        return next
-      })
-    }, 50)
+    const shouldRun = isInView && isTabVisible && !manualPaused && !autoPaused
+    if (!shouldRun) {
+      lastTimeRef.current = null
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+      return
+    }
 
-    return () => window.clearInterval(timer)
-  }, [manualPaused, autoPaused, reduced, mobile])
+    const loop = (timestamp: number) => {
+      if (lastTimeRef.current === null) {
+        lastTimeRef.current = timestamp
+      }
+      const delta = timestamp - lastTimeRef.current
+      lastTimeRef.current = timestamp
 
-  useEffect(() => {
-    const visibility = () => setAutoPaused(document.hidden)
-    document.addEventListener('visibilitychange', visibility)
-    return () => document.removeEventListener('visibilitychange', visibility)
-  }, [])
+      elapsedRef.current = (elapsedRef.current + delta) % CYCLE_DURATION
+      setElapsed(elapsedRef.current)
 
-  // Cronologia do ciclo de 8s:
-  // 0 - 300ms: pausa inicial
-  // 300ms - 2200ms: digitação do cliente
-  // 2200ms - 3000ms: resposta da IA em menos de 1s
-  // 3000ms - 5200ms: entrada em sequência dos 3 blocos
-  // 5200ms - 8000ms: visualização final do ciclo
-  const typeStart = 300
-  const typingSpeed = 35
+      animFrameRef.current = requestAnimationFrame(loop)
+    }
+
+    animFrameRef.current = requestAnimationFrame(loop)
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+    }
+  }, [isInView, isTabVisible, manualPaused, reduced])
+
+  // Cronologia acelerada e dinâmica (ciclo total 4800ms):
+  // 0 - 150ms: início imediato
+  // 150ms - 1300ms: digitação ágil (ritmo vivo, ~20ms por caractere)
+  // 1300ms - 1700ms: IA responde com confirmação imediata
+  // 1700ms: Bloco 1 (Mensagem atendida)
+  // 2100ms: Bloco 2 (Horário agendado)
+  // 2500ms: Bloco 3 (Lead registrado no CRM)
+  // 2500ms - 4800ms: Leitura clara do ciclo completo e reinício sem pausa morta
+  const typeStart = 150
+  const typingSpeed = 20
   const typedLength = Math.max(
     0,
     Math.min(CUSTOMER_MESSAGE.length, Math.floor((elapsed - typeStart) / typingSpeed)),
   )
-  const replyAt = 2200
+  const replyAt = 1350
   const replyVisible = elapsed >= replyAt || reduced
 
-  const statusCount = reduced ? 3 : elapsed < 3000 ? 0 : elapsed < 3700 ? 1 : elapsed < 4400 ? 2 : 3
+  const statusCount = reduced ? 3 : elapsed < 1700 ? 0 : elapsed < 2100 ? 1 : elapsed < 2500 ? 2 : 3
 
   return (
     <div
