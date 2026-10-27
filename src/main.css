@@ -134,14 +134,19 @@ svg {
 .section-heading.is-light > p:last-child {
   color: rgba(242, 240, 234, 0.68);
 }
+/* Conteúdo visível por padrão; somente quando JS ativo e com animações habilitadas o observador adiciona a classe js-reveal para preparar o efeito de entrada */
 [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+html.js-reveal [data-reveal] {
   opacity: 0;
   transform: translate3d(0, 24px, 0);
   transition:
     opacity 500ms ease-out var(--delay, 0ms),
     transform 500ms ease-out var(--delay, 0ms);
 }
-[data-reveal].is-revealed {
+html.js-reveal [data-reveal].is-revealed {
   opacity: 1;
   transform: translate3d(0, 0, 0);
 }
@@ -1444,7 +1449,7 @@ svg {
 }
 .audience-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   border-top: 1px solid rgba(242, 240, 234, 0.2);
   border-bottom: 1px solid rgba(242, 240, 234, 0.2);
 }
@@ -2337,7 +2342,8 @@ svg {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  [data-reveal] {
+  [data-reveal],
+  html.js-reveal [data-reveal] {
     opacity: 1 !important;
     transform: none !important;
   }

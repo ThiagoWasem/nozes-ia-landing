@@ -50,10 +50,15 @@ export function Layout({ children }: LayoutProps) {
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     if (reduced || !('IntersectionObserver' in window)) {
+      document.documentElement.classList.remove('js-reveal')
       elements.forEach((element) => element.classList.add('is-revealed'))
       return
     }
+
+    // Com JavaScript ativo e sem preferência por redução de movimento, ativa a classe de animação
+    document.documentElement.classList.add('js-reveal')
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -67,8 +72,19 @@ export function Layout({ children }: LayoutProps) {
       { threshold: 0.14, rootMargin: '0px 0px -6% 0px' },
     )
 
-    elements.forEach((element) => observer.observe(element))
-    return () => observer.disconnect()
+    elements.forEach((element) => {
+      // Elementos que já estiverem visíveis ou acima da dobra revelam imediatamente
+      const rect = element.getBoundingClientRect()
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        element.classList.add('is-revealed')
+      } else {
+        observer.observe(element)
+      }
+    })
+
+    return () => {
+      observer.disconnect()
+    }
   }, [pathname])
 
   return (

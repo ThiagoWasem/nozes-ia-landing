@@ -1,14 +1,50 @@
-import { BriefcaseBusiness, CarFront, House, PanelsTopLeft, ShoppingBag } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import {
+  BriefcaseBusiness,
+  CarFront,
+  HelpCircle,
+  House,
+  PanelsTopLeft,
+  ShoppingBag,
+} from 'lucide-react'
 import { SEGMENTOS } from '@/lib/site'
 
-const descriptions = [
-  'Projetos, medidas e orçamentos com informação organizada.',
-  'Solicitações residenciais encaminhadas com mais contexto.',
-  'Atendimento, serviços e agendamentos em um fluxo claro.',
-  'Produtos e contatos fáceis de consultar e acompanhar.',
-  'Presença, agenda e relacionamento conectados à rotina.',
-]
-const icons = [PanelsTopLeft, House, CarFront, ShoppingBag, BriefcaseBusiness]
+interface SegmentDetails {
+  icon: LucideIcon
+  description: string
+}
+
+const SEGMENT_DETAILS: Record<string, SegmentDetails> = {
+  'Móveis planejados': {
+    icon: PanelsTopLeft,
+    description: 'Projetos, medidas e orçamentos com informação organizada.',
+  },
+  'Esquadrias e serviços residenciais': {
+    icon: House,
+    description: 'Solicitações residenciais encaminhadas com mais contexto.',
+  },
+  Automotivo: {
+    icon: CarFront,
+    description: 'Atendimento, serviços e agendamentos em um fluxo claro.',
+  },
+  'Varejo local': {
+    icon: ShoppingBag,
+    description: 'Produtos e contatos fáceis de consultar e acompanhar.',
+  },
+  'Serviços profissionais': {
+    icon: BriefcaseBusiness,
+    description: 'Presença, agenda e relacionamento conectados à rotina.',
+  },
+  Outro: {
+    icon: HelpCircle,
+    description: 'Gargalos mapeados e soluções digitais sob medida para a sua operação.',
+  },
+}
+
+const DEFAULT_SEGMENT_DETAILS: SegmentDetails = {
+  icon: HelpCircle,
+  description: 'Gargalos mapeados e soluções digitais sob medida para a sua operação.',
+}
 
 export function AudienceSection() {
   return (
@@ -23,13 +59,16 @@ export function AudienceSection() {
           tabIndex={0}
           aria-label="Segmentos atendidos, role horizontal no celular"
         >
-          {SEGMENTOS.map((segment, index) => {
-            const Icon = icons[index]
+          {SEGMENTOS.map((segment) => {
+            const detail = SEGMENT_DETAILS[segment] || DEFAULT_SEGMENT_DETAILS
+            const Icon = detail.icon || HelpCircle
+            const description = detail.description || DEFAULT_SEGMENT_DETAILS.description
+
             return (
               <article key={segment}>
-                <Icon size={23} aria-hidden="true" />
+                {Icon ? <Icon size={23} aria-hidden="true" /> : null}
                 <h3>{segment}</h3>
-                <p>{descriptions[index]}</p>
+                <p>{description}</p>
               </article>
             )
           })}
