@@ -13,7 +13,9 @@ export type FormVariant = 'curto' | 'etapas'
 export const DEPOIMENTOS_VISIVEIS = true
 export const CASOS_VISIVEIS = false
 export const GOOGLE_REVIEW_URL: string = ''
-export const MAPS_EMBED_URL: string = ''
+// Place ID oficial da Nozes Ink: ChIJOSAiDO623pQRNIFx22W5Ix4
+export const MAPS_PLACE_ID = 'ChIJOSAiDO623pQRNIFx22W5Ix4'
+export const MAPS_EMBED_URL: string = `https://maps.google.com/maps?q=place_id:${MAPS_PLACE_ID}&output=embed`
 export const AB_HERO: HeroVariant = 'A'
 export const FORM_AB: FormVariant = 'curto'
 

@@ -1,16 +1,24 @@
+import { useState, useEffect } from 'react'
 import {
+  Bot,
   CalendarDays,
   Check,
   Code2,
+  Cpu,
   Globe2,
   LayoutTemplate,
   MessageCircle,
+  Pause,
+  Play,
   RefreshCw,
   Rows3,
+  Sparkles,
   UserRoundSearch,
+  Zap,
 } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { CONFIG } from '@/lib/site'
+import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import { SectionHeading } from './SectionHeading'
 
 /* ==========================================================================
@@ -106,16 +114,67 @@ function WhatsAppDemo() {
   )
 }
 
+/* Orbit / Radar Tech de Catálogos Digitais com IA e capacidades da Nozes Ink */
+const ORBIT_ITEMS = [
+  { id: 'ia', label: 'IA no WhatsApp', icon: Bot, angle: 0 },
+  { id: 'cat', label: 'Catálogo Ágil', icon: Sparkles, angle: 60 },
+  { id: 'ts', label: 'TypeScript', icon: Code2, angle: 120 },
+  { id: 'auto', label: 'Automação', icon: Zap, angle: 180 },
+  { id: 'sync', label: 'Integrações', icon: Cpu, angle: 240 },
+  { id: 'react', label: 'React / Web', icon: Code2, angle: 300 },
+]
+
 function CatalogDemo() {
+  const reduced = useReducedMotion()
+  const [isPaused, setIsPaused] = useState(false)
+  const [activeItem, setActiveItem] = useState(0)
+
+  // Rotação visual suave com pausa no hover ou clique
+  useEffect(() => {
+    if (reduced || isPaused) return
+    const interval = window.setInterval(() => {
+      setActiveItem((prev) => (prev + 1) % ORBIT_ITEMS.length)
+    }, 2800)
+    return () => window.clearInterval(interval)
+  }, [reduced, isPaused])
+
   return (
-    <div className="catalog-demo" aria-hidden="true">
-      <div className="orbit-ring auto-orbit" data-orbit>
-        <span className="orbit-text text-one">React</span>
-        <span className="orbit-text text-two">TypeScript</span>
-        <span className="orbit-text text-three">Tailwind</span>
-        <span className="orbit-mark" data-orbit-upright>
-          <Logo variant="symbol" tone="evergreen" />
-        </span>
+    <div
+      className="catalog-demo"
+      aria-label="Capacidades de tecnologia e IA do catálogo"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused((p) => !p)}
+    >
+      <div className="catalog-radar-grid" aria-hidden="true">
+        <div className="radar-circle circle-outer" />
+        <div className="radar-circle circle-mid" />
+        <div className="radar-circle circle-inner" />
+        <div className="radar-cross-h" />
+        <div className="radar-cross-v" />
+      </div>
+
+      <div className="orbit-center-hub" aria-hidden="true">
+        <Logo variant="symbol" tone="evergreen" />
+        <span className="hub-badge">IA + Web</span>
+      </div>
+
+      <div className="catalog-orbit-nodes" aria-hidden="true">
+        {ORBIT_ITEMS.map((item, index) => {
+          const Icon = item.icon
+          const isActive = index === activeItem
+          return (
+            <div
+              key={item.id}
+              className={`catalog-node node-${index + 1} ${isActive ? 'is-active' : ''}`}
+            >
+              <div className="node-icon">
+                <Icon size={13} aria-hidden="true" />
+              </div>
+              <span className="node-label">{item.label}</span>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -246,13 +305,7 @@ function FeatureVisual({ demo }: { demo?: string }) {
     )
   }
   if (demo === 'messages') {
-    return (
-      <div className="messages-mini" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
-    )
+    return <WhatsAppDemo />
   }
   if (demo === 'crm') {
     return (

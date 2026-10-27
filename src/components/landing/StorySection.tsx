@@ -51,33 +51,46 @@ function PhoneStory() {
 function StoryIndicators() {
   return (
     <div className="story-indicators">
-      <p className="story-kicker">Dados ilustrativos</p>
+      <div className="story-indicators-header">
+        <span className="story-kicker">Dados ilustrativos</span>
+        <span className="story-badge-live">Tempo real</span>
+      </div>
       <strong data-story-indicator>Organizando conversas</strong>
       <div className="indicator-grid">
-        <div>
-          <span data-counter data-target="32">
-            32
+        <div className="indicator-item">
+          <span data-counter data-base="12" data-target="32">
+            12
           </span>
           <small>Atendimentos automáticos</small>
         </div>
-        <div>
-          <span data-counter data-target="14">
-            14
+        <div className="indicator-item">
+          <span data-counter data-base="4" data-target="14">
+            4
           </span>
           <small>Agendamentos</small>
         </div>
-        <div>
-          <span data-counter data-target="19">
-            19
+        <div className="indicator-item">
+          <span data-counter data-base="6" data-target="19">
+            6
           </span>
           <small>Leads no CRM</small>
         </div>
       </div>
       <div className="story-chart">
-        <span>Evolução dos atendimentos</span>
+        <div className="story-chart-meta">
+          <span>Evolução dos atendimentos</span>
+          <span className="story-chart-growth">+165% fluxo</span>
+        </div>
         <svg viewBox="0 0 420 150" role="img" aria-label="Gráfico ilustrativo de evolução">
+          <defs>
+            <linearGradient id="chartGoldGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.32" />
+              <stop offset="100%" stopColor="var(--gold)" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
           <path
             className="chart-area"
+            fill="url(#chartGoldGrad)"
             d="M12 135 C70 130 86 116 132 120 S205 80 250 91 S330 36 408 21 L408 145 L12 145 Z"
           />
           <path

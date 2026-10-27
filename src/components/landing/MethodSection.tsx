@@ -1,10 +1,31 @@
+import { Search, ListFilter, Wrench, LineChart } from 'lucide-react'
 import { SectionHeading } from './SectionHeading'
 
 const steps = [
-  ['Diagnosticar', 'Entender como a operação funciona hoje.'],
-  ['Priorizar', 'Escolher o gargalo que merece atenção primeiro.'],
-  ['Implementar', 'Construir a solução adequada ao problema.'],
-  ['Acompanhar', 'Verificar o resultado e identificar o próximo gargalo.'],
+  {
+    title: 'Diagnosticar',
+    copy: 'Entender como a operação funciona hoje e onde o cliente escapa.',
+    tag: 'Fase 01',
+    icon: Search,
+  },
+  {
+    title: 'Priorizar',
+    copy: 'Escolher o gargalo que merece atenção primeiro para dar tração.',
+    tag: 'Fase 02',
+    icon: ListFilter,
+  },
+  {
+    title: 'Implementar',
+    copy: 'Construir a solução adequada ao problema real, sem excessos.',
+    tag: 'Fase 03',
+    icon: Wrench,
+  },
+  {
+    title: 'Acompanhar',
+    copy: 'Verificar o resultado em números e mapear o próximo avanço.',
+    tag: 'Fase 04',
+    icon: LineChart,
+  },
 ]
 
 export function MethodSection() {
@@ -20,14 +41,23 @@ export function MethodSection() {
           <div className="method-track" aria-hidden="true">
             <span />
           </div>
-          {steps.map(([title, copy], index) => (
+          {steps.map(({ title, copy, tag, icon: Icon }, index) => (
             <article className="method-step" data-method-node key={title}>
-              <div className="method-node">
-                <span>0{index + 1}</span>
-                <i />
+              <div className="method-node-wrapper">
+                <div className="method-node">
+                  <span>0{index + 1}</span>
+                  <div className="method-pulse-ring" aria-hidden="true" />
+                  <i />
+                </div>
+                <div className="method-icon-badge" aria-hidden="true">
+                  <Icon size={14} />
+                </div>
               </div>
-              <h3>{title}</h3>
-              <p>{copy}</p>
+              <div className="method-step-content">
+                <span className="method-phase-tag">{tag}</span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </div>
             </article>
           ))}
         </div>
