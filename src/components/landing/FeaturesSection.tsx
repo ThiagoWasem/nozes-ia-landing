@@ -55,10 +55,61 @@ function CalendarDemo() {
   )
 }
 
+function WhatsAppDemo() {
+  const reduced = useReducedMotion()
+  const [step, setStep] = useState(reduced ? 3 : 1)
+  const [isPaused, setIsPaused] = useState(false)
+
+  useEffect(() => {
+    if (reduced || isPaused) return
+    const interval = window.setInterval(() => {
+      setStep((s) => (s >= 3 ? 1 : s + 1))
+    }, 2200)
+    return () => window.clearInterval(interval)
+  }, [reduced, isPaused])
+
+  return (
+    <div className="whatsapp-card-demo" aria-label="Demonstração ilustrativa de atendimento">
+      <div className="whatsapp-card-demo-header">
+        <span className="mini-demo-label">Demonstração ilustrativa</span>
+        {!reduced && (
+          <button
+            type="button"
+            className="mini-demo-pause-btn"
+            onClick={() => setIsPaused((p) => !p)}
+            aria-label={
+              isPaused ? 'Retomar demonstração de WhatsApp' : 'Pausar demonstração de WhatsApp'
+            }
+            title={isPaused ? 'Retomar' : 'Pausar'}
+          >
+            {isPaused ? (
+              <Play size={10} aria-hidden="true" />
+            ) : (
+              <Pause size={10} aria-hidden="true" />
+            )}
+          </button>
+        )}
+      </div>
+      <div className="messages-stream" aria-hidden="true">
+        <div className={`message-bubble bubble-client ${step >= 1 ? 'is-visible' : ''}`}>
+          <span>Qual o valor do projeto?</span>
+        </div>
+        <div className={`message-bubble bubble-assistant ${step >= 2 ? 'is-visible' : ''}`}>
+          <span>Olá! Fazemos um diagnóstico gratuito antes.</span>
+        </div>
+        <div className={`message-bubble bubble-system ${step >= 3 ? 'is-visible' : ''}`}>
+          <Check size={11} aria-hidden="true" />
+          <span>Atendimento iniciado em 40s</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function CatalogDemo() {
   return (
     <div className="catalog-demo" aria-hidden="true">
-      <div className="orbit-ring" data-orbit>
+      <div className="orbit-ring auto-orbit" data-orbit>
         <span className="orbit-text text-one">React</span>
         <span className="orbit-text text-two">TypeScript</span>
         <span className="orbit-text text-three">Tailwind</span>

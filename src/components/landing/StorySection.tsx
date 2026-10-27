@@ -28,9 +28,13 @@ function PhoneStory() {
         <i aria-hidden="true" />
       </div>
       <div className="phone-messages">
-        <div data-story-message>Olá! Gostaria de saber os horários para atendimento amanhã.</div>
-        <div data-story-message>Olá! Temos vaga amanhã às 14h ou às 16h30. Qual prefere?</div>
-        <div data-story-message>
+        <div data-story-message className="story-msg-visible">
+          Olá! Gostaria de saber os horários para atendimento amanhã.
+        </div>
+        <div data-story-message className="story-msg-visible">
+          Olá! Temos vaga amanhã às 14h ou às 16h30. Qual prefere?
+        </div>
+        <div data-story-message className="story-msg-visible">
           Às 14h perfeito!
           <span>
             <Check size={11} aria-hidden="true" /> Agendado e registrado no CRM
@@ -48,23 +52,23 @@ function StoryIndicators() {
   return (
     <div className="story-indicators">
       <p className="story-kicker">Dados ilustrativos</p>
-      <strong data-story-indicator>Atendimentos automáticos</strong>
+      <strong data-story-indicator>Organizando conversas</strong>
       <div className="indicator-grid">
         <div>
           <span data-counter data-target="32">
-            0
+            32
           </span>
           <small>Atendimentos automáticos</small>
         </div>
         <div>
           <span data-counter data-target="14">
-            0
+            14
           </span>
           <small>Agendamentos</small>
         </div>
         <div>
           <span data-counter data-target="19">
-            0
+            19
           </span>
           <small>Leads no CRM</small>
         </div>

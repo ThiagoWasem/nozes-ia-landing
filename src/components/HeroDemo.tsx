@@ -41,8 +41,8 @@ export function HeroDemo() {
     const timer = window.setInterval(() => {
       setElapsed((value) => {
         const next = value + 50
-        // No mobile simplificado: conclui o ciclo e para (sem loop contínuo)
-        if (next >= CYCLE_DURATION) return mobile ? CYCLE_DURATION : 0
+        // Loop contínuo e fluído em todos os dispositivos
+        if (next >= CYCLE_DURATION) return 0
         return next
       })
     }, 50)
@@ -138,7 +138,7 @@ export function HeroDemo() {
         </div>
       </div>
 
-      {!reduced && !mobile && (
+      {!reduced && (
         <button
           type="button"
           className="demo-control"
@@ -147,13 +147,14 @@ export function HeroDemo() {
             trackEvent('interacao_demo', { acao: manualPaused ? 'retomar' : 'pausar' })
           }}
           aria-pressed={manualPaused}
+          aria-label={manualPaused ? 'Retomar demonstração do hero' : 'Pausar demonstração do hero'}
         >
           {manualPaused ? (
             <Play size={15} aria-hidden="true" />
           ) : (
             <Pause size={15} aria-hidden="true" />
           )}
-          {manualPaused ? 'Retomar' : 'Pausar demonstração'}
+          <span>{manualPaused ? 'Retomar' : 'Pausar demonstração'}</span>
         </button>
       )}
     </div>
