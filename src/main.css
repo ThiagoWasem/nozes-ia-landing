@@ -1954,6 +1954,12 @@ html.js-reveal [data-reveal].is-revealed {
   .form-actions {
     flex-direction: column;
   }
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -2325,6 +2331,13 @@ html.js-reveal [data-reveal].is-revealed {
   .footer-grid > div:first-child {
     grid-column: auto;
   }
+  .footer-grid-4 {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
   .site-footer {
     padding-top: 62px;
   }
@@ -2368,4 +2381,362 @@ html.js-reveal [data-reveal].is-revealed {
   .diagnostic-cta::before {
     display: none;
   }
+}
+
+/* ==========================================================================
+   CSS ADICIONAL: TESTIMONIALS, SHORT FORM, FOOTER 4-COL, MOBILE BAR
+   ========================================================================== */
+
+/* Barra Fixa no Mobile */
+.mobile-sticky-bar {
+  display: none;
+}
+@media (max-width: 640px) {
+  .mobile-sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(27, 28, 27, 0.96);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(192, 142, 75, 0.3);
+    transform: translateY(110%);
+    transition: transform 0.28s ease;
+  }
+  .mobile-sticky-bar.is-visible {
+    transform: translateY(0);
+  }
+  .mobile-bar-btn {
+    flex: 1;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 14px;
+  }
+  .mobile-bar-btn.diagnostic {
+    background: var(--gold);
+    color: var(--graphite);
+  }
+  .mobile-bar-btn.whatsapp {
+    background: var(--evergreen);
+    color: var(--offwhite);
+    border: 1px solid rgba(242, 240, 234, 0.2);
+  }
+}
+
+/* Seção Depoimentos (O que nossos clientes dizem) */
+.testimonials-section {
+  background: var(--offwhite);
+  padding: 100px 0;
+}
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid var(--stone);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: 0 8px 24px rgba(31, 59, 51, 0.04);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.testimonial-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(192, 142, 75, 0.5);
+  box-shadow: 0 16px 36px rgba(31, 59, 51, 0.08);
+}
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  background: var(--stone);
+  color: var(--evergreen);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+.testimonial-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.testimonial-company {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--graphite);
+  margin: 0;
+  line-height: 1.3;
+}
+.testimonial-author,
+.testimonial-role,
+.testimonial-city {
+  font-size: 12px;
+  color: var(--muted);
+}
+.testimonial-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.star-icon {
+  color: var(--gold);
+}
+.testimonial-text {
+  margin: 0 0 auto;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #3f423e;
+  font-style: normal;
+}
+.testimonial-text p {
+  margin: 0;
+}
+.testimonial-date {
+  display: block;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.testimonials-action {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+.google-review-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--teal);
+  color: var(--evergreen);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.google-review-btn:hover {
+  background: var(--evergreen);
+  color: var(--offwhite);
+}
+
+/* Soluções (Bento grid atualizações de itens e orbit text) */
+.feature-top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.feature-benefit {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(242, 240, 234, 0.78);
+  margin: 0 0 12px;
+}
+.feature-deliverables {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(242, 240, 234, 0.1);
+}
+.deliverables-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.feature-deliverables ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.feature-deliverables li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(242, 240, 234, 0.7);
+}
+.feature-deliverables li svg {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.orbit-text {
+  position: absolute;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  background: var(--graphite);
+  border: 1px solid rgba(192, 142, 75, 0.45);
+}
+.text-one {
+  top: -14px;
+  left: 60px;
+}
+.text-two {
+  top: 80px;
+  right: -24px;
+}
+.text-three {
+  bottom: -10px;
+  left: 50px;
+}
+
+/* Seção Para quem é */
+.audience-icon-wrap {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(192, 142, 75, 0.15);
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+/* Formulário Curto e LGPD link */
+.consent-row {
+  margin-top: 6px;
+}
+.consent-text {
+  font-size: 12px;
+  color: #555854;
+  line-height: 1.4;
+}
+.privacy-inline-link {
+  color: var(--evergreen);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+}
+.whatsapp-fallback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 7px 14px;
+  border-radius: 6px;
+  background: var(--evergreen);
+  color: var(--offwhite);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Rodapé em 4 colunas */
+.footer-grid-4 {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.9fr 1fr;
+  gap: 40px;
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+.footer-contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+.footer-maps-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.footer-maps-link:hover {
+  text-decoration: underline;
+}
+.footer-social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.social-icon-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(242, 240, 234, 0.85);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.2s ease;
+}
+.social-icon-link:hover {
+  color: var(--gold);
+}
+.footer-map-frame {
+  width: 100%;
+  height: 220px;
+  border: 0;
+  border-radius: 8px;
+}
+.footer-map-skeleton,
+.footer-map-fallback {
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+  border: 1px solid rgba(242, 240, 234, 0.15);
+  background: rgba(242, 240, 234, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(242, 240, 234, 0.65);
+}
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-bottom-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

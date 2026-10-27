@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ArrowDown, ArrowUpRight, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, MessageCircle, ShieldCheck } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { HeroDemo } from '@/components/HeroDemo'
 import { DiagnosticCtaButton } from '@/components/DiagnosticCtaButton'
@@ -7,8 +7,9 @@ import { RaioxSection } from '@/components/landing/RaioxSection'
 import { MethodSection } from '@/components/landing/MethodSection'
 import { FeaturesSection } from '@/components/landing/FeaturesSection'
 import { StorySection } from '@/components/landing/StorySection'
-import { CasesSection } from '@/components/landing/CasesSection'
 import { AudienceSection } from '@/components/landing/AudienceSection'
+import { TestimonialsSection } from '@/components/landing/TestimonialsSection'
+import { CasesSection } from '@/components/landing/CasesSection'
 import { DiagnosticForm } from '@/components/landing/DiagnosticForm'
 import { CONFIG, HERO_COPY, VARIANTE_HERO, WHATSAPP_URL } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
@@ -52,6 +53,10 @@ function MidCta() {
 }
 
 export default function Index() {
+  /* ==========================================================================
+     PONTO DE TROCA DO TESTE A/B DO HERO:
+     Controlado por VARIANTE_HERO (e AB_HERO em src/lib/site.ts).
+     ========================================================================== */
   const copy = HERO_COPY[VARIANTE_HERO]
   useLandingMotion()
 
@@ -62,19 +67,15 @@ export default function Index() {
   return (
     <Layout>
       <main>
+        {/* 1. HERO */}
         <section
           className={`hero hero-variant-${VARIANTE_HERO.toLowerCase()} visual-${copy.visual}`}
         >
           <div className="hero-grid shell">
             <div className="hero-copy">
-              <p className="hero-kicker">
-                <Sparkles size={15} aria-hidden="true" /> IA e soluções digitais em Joinville
-              </p>
+              <p className="hero-kicker">{copy.kicker}</p>
               <h1>{copy.title}</h1>
-              <p className="hero-subtitle">
-                Analisamos como sua empresa funciona, identificamos gargalos e implementamos
-                soluções digitais.
-              </p>
+              <p className="hero-subtitle">{copy.subtitle}</p>
               <div className="hero-actions">
                 <DiagnosticCtaButton source="hero" onClick={scrollToForm}>
                   {copy.cta}
@@ -82,7 +83,7 @@ export default function Index() {
                 <WhatsappLink source="hero" />
               </div>
               <p className="microproof">
-                <ShieldCheck size={16} aria-hidden="true" /> Diagnóstico gratuito. Sem compromisso.
+                <ShieldCheck size={16} aria-hidden="true" /> {copy.microproof}
               </p>
             </div>
             {CONFIG.demo_whatsapp_ativa && <HeroDemo />}
@@ -93,32 +94,46 @@ export default function Index() {
           </a>
         </section>
 
+        {/* 2. PROBLEMA (Raio-X) */}
         <div id="raiox">
           <RaioxSection />
         </div>
+
+        {/* 3. MÉTODO GARGALO */}
         <MethodSection />
+
+        {/* 4. SOLUÇÕES DIGITAIS (bento grid) */}
         <FeaturesSection />
+
+        {/* 5. STORYTELLING (sticky desktop) */}
         <StorySection />
-        <MidCta />
-        <CasesSection />
+
+        {/* 6. PARA QUEM É */}
         <AudienceSection />
 
+        {/* 7. O QUE NOSSOS CLIENTES DIZEM (DEPOIMENTOS_VISIVEIS = true) */}
+        <TestimonialsSection />
+
+        {/* CTA intermediário */}
+        <MidCta />
+
+        {/* 8. CASOS REAIS (oculto enquanto CASOS_VISIVEIS = false) */}
+        <CasesSection />
+
+        {/* 9. DIAGNÓSTICO (formulário padrão curto; 3 etapas preparado para teste A/B) */}
         <section className="final-cta" id="diagnostico" aria-labelledby="diagnostico-title">
           <div className="shell final-cta-grid">
             <div className="final-cta-copy" data-reveal>
               <p className="eyebrow">Diagnóstico gratuito</p>
               <h2 id="diagnostico-title">Antes de qualquer solução, um diagnóstico.</h2>
-              <p>
-                O diagnóstico é o primeiro passo. Só recomendamos solução depois de entender o
-                problema.
-              </p>
+              <p>Preencha em menos de 1 minuto. Entramos em contato pelo WhatsApp.</p>
               <div className="diagnostic-note">
                 <span>
                   <ArrowUpRight size={19} aria-hidden="true" />
                 </span>
                 <p>
-                  <strong>O que acontece depois?</strong> Entramos em contato, entendemos seu
-                  cenário e definimos se existe um próximo passo útil.
+                  <strong>O diagnóstico é o primeiro passo.</strong> Só recomendamos solução depois
+                  de entender o problema.
                 </p>
               </div>
             </div>

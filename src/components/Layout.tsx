@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { MessageCircle, MapPin } from 'lucide-react'
+import { MessageCircle, MapPin, ExternalLink } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { DiagnosticCtaButton } from '@/components/DiagnosticCtaButton'
-import { CONFIG, WHATSAPP_URL, REDES_SOCIAIS, ENDERECO_RODAPE } from '@/lib/site'
+import { CONFIG, WHATSAPP_URL, REDES_SOCIAIS, ENDERECO_RODAPE, MAPS_EMBED_URL } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
 
 interface LayoutProps {
@@ -24,18 +24,74 @@ function scrollToDiagnostic() {
 export function Layout({ children }: LayoutProps) {
   const { pathname, hash } = useLocation()
   const [scrolled, setScrolled] = useState(pathname !== '/')
+  const [showMobileFixedBar, setShowMobileFixedBar] = useState(false)
+  const [isInputFocused, setIsInputFocused] = useState(false)
+  const [loadMap, setLoadMap] = useState(false)
+  const mapContainerRef = useRef<HTMLDivElement>(null)
 
+  // Controle de scroll para o cabeçalho e para a barra fixa no mobile
   useEffect(() => {
-    const update = () => setScrolled(pathname !== '/' || window.scrollY > window.innerHeight * 0.6)
-    update()
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      setScrolled(pathname !== '/' || scrollY > 60)
+      // Barra fixa mobile aparece após a primeira dobra (aproximadamente 60% da tela)
+      setShowMobileFixedBar(pathname === '/' && scrollY > window.innerHeight * 0.6)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
     return () => {
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
     }
   }, [pathname])
 
+  // Esconder barra fixa do mobile quando algum campo de formulário estiver focado
+  useEffect(() => {
+    const handleFocusIn = (e: FocusEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA')
+      ) {
+        setIsInputFocused(true)
+      }
+    }
+
+    const handleFocusOut = () => {
+      setIsInputFocused(false)
+    }
+
+    window.addEventListener('focusin', handleFocusIn)
+    window.addEventListener('focusout', handleFocusOut)
+    return () => {
+      window.removeEventListener('focusin', handleFocusIn)
+      window.removeEventListener('focusout', handleFocusOut)
+    }
+  }, [])
+
+  // Lazy loading do iframe do mapa via IntersectionObserver
+  useEffect(() => {
+    if (!MAPS_EMBED_URL || !mapContainerRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setLoadMap(true)
+            observer.disconnect()
+          }
+        })
+      },
+      { rootMargin: '200px 0px' },
+    )
+
+    observer.observe(mapContainerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  // Suporte a âncoras na URL
   useEffect(() => {
     if (!hash) {
       window.scrollTo({ top: 0, behavior: 'auto' })
@@ -47,6 +103,7 @@ export function Layout({ children }: LayoutProps) {
     return () => cancelAnimationFrame(frame)
   }, [pathname, hash])
 
+  // Revelação de elementos com IntersectionObserver (threshold 0.15, rootMargin 0px 0px -10% 0px)
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -57,7 +114,6 @@ export function Layout({ children }: LayoutProps) {
       return
     }
 
-    // Com JavaScript ativo e sem preferência por redução de movimento, ativa a classe de animação
     document.documentElement.classList.add('js-reveal')
 
     const observer = new IntersectionObserver(
@@ -69,11 +125,10 @@ export function Layout({ children }: LayoutProps) {
           }
         })
       },
-      { threshold: 0.14, rootMargin: '0px 0px -6% 0px' },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' },
     )
 
     elements.forEach((element) => {
-      // Elementos que já estiverem visíveis ou acima da dobra revelam imediatamente
       const rect = element.getBoundingClientRect()
       if (rect.top < window.innerHeight && rect.bottom > 0) {
         element.classList.add('is-revealed')
@@ -82,10 +137,12 @@ export function Layout({ children }: LayoutProps) {
       }
     })
 
-    return () => {
-      observer.disconnect()
-    }
+    return () => observer.disconnect()
   }, [pathname])
+
+  const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    ENDERECO_RODAPE,
+  )}`
 
   return (
     <div className="site-frame">
@@ -93,16 +150,31 @@ export function Layout({ children }: LayoutProps) {
         Pular para o conteúdo
       </a>
 
-      <div className="mobile-cta-strip">
+      {/* BARRA FIXA NO MOBILE: botões "Diagnóstico" e "WhatsApp", min-height 44px, oculta com input em foco */}
+      <div
+        className={`mobile-sticky-bar ${showMobileFixedBar && !isInputFocused ? 'is-visible' : ''}`}
+        aria-label="Ações rápidas"
+      >
         <button
           type="button"
+          className="mobile-bar-btn diagnostic"
           onClick={() => {
-            trackEvent('clique_cta', { origem: 'topo_mobile' })
+            trackEvent('clique_cta', { origem: 'barra_fixa_mobile' })
             scrollToDiagnostic()
           }}
         >
-          Solicitar meu diagnóstico
+          Diagnóstico
         </button>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="mobile-bar-btn whatsapp"
+          onClick={() => trackEvent('clique_whatsapp', { origem: 'barra_fixa_mobile' })}
+        >
+          <MessageCircle size={16} aria-hidden="true" />
+          <span>WhatsApp</span>
+        </a>
       </div>
 
       <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
@@ -131,109 +203,157 @@ export function Layout({ children }: LayoutProps) {
 
       <div id="conteudo">{children}</div>
 
+      {/* RODAPÉ OFICIAL: 4 colunas desktop, 2 tablet, 1 mobile. Fundo evergreen, logo Off-White */}
       <footer className="site-footer" data-reveal>
-        <div className="shell footer-grid">
-          <div>
+        <div className="shell footer-grid-4">
+          {/* Coluna 1: Marca e posicionamento */}
+          <div className="footer-col col-brand">
             <Logo variant="horizontal" tone="light" className="footer-logo" />
-            <p className="footer-positioning">Soluções digitais orientadas por diagnóstico.</p>
+            <p className="footer-positioning">Diagnóstico antes da solução.</p>
           </div>
-          <div className="footer-contact">
+
+          {/* Coluna 2: Contato e Localização */}
+          <div className="footer-col col-contact">
             <p className="footer-label">Contato e Localização</p>
             <p className="footer-address">
               <MapPin size={16} aria-hidden="true" className="inline-icon" />
               <span>{ENDERECO_RODAPE}</span>
             </p>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="footer-whatsapp-link"
-              onClick={() => trackEvent('clique_whatsapp', { origem: 'rodape' })}
-            >
-              <MessageCircle size={18} aria-hidden="true" /> Conversar pelo WhatsApp
-            </a>
-
-            {/* REDES SOCIAIS OFICIAIS: Instagram, Facebook e TikTok seguindo diretrizes oficiais */}
-            <div className="footer-social-section">
-              <p className="footer-social-label">Redes sociais</p>
-              <div className="footer-social-links">
-                <a
-                  href={REDES_SOCIAIS.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="social-icon-link"
-                  aria-label="Instagram da Nozes Ink"
-                  onClick={() => trackEvent('clique_rede_social', { rede: 'instagram' })}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                  </svg>
-                  <span>Instagram</span>
-                </a>
-                <a
-                  href={REDES_SOCIAIS.facebook}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="social-icon-link"
-                  aria-label="Facebook da Nozes Ink"
-                  onClick={() => trackEvent('clique_rede_social', { rede: 'facebook' })}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
-                  <span>Facebook</span>
-                </a>
-                <a
-                  href={REDES_SOCIAIS.tiktok}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="social-icon-link"
-                  aria-label="TikTok da Nozes Ink"
-                  onClick={() => trackEvent('clique_rede_social', { rede: 'tiktok' })}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.94-4.52V8.75a8.23 8.23 0 0 0 4.83 1.57V6.87a4.85 4.85 0 0 1-1-.18z" />
-                  </svg>
-                  <span>TikTok</span>
-                </a>
-              </div>
+            <div className="footer-contact-actions">
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="footer-whatsapp-link"
+                onClick={() => trackEvent('clique_whatsapp', { origem: 'rodape' })}
+              >
+                <MessageCircle size={17} aria-hidden="true" /> Conversar no WhatsApp
+              </a>
+              <a
+                href={mapsSearchUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="footer-maps-link"
+                onClick={() => trackEvent('clique_abrir_maps')}
+              >
+                <ExternalLink size={15} aria-hidden="true" /> Abrir no Google Maps
+              </a>
             </div>
           </div>
-          <div className="footer-legal">
-            <p className="footer-label">Privacidade</p>
-            <Link to="/politica-de-privacidade">Política de privacidade</Link>
-            <p>
-              Usamos apenas cookies essenciais e, quando ativada, medição de uso sem identificar
-              você diretamente.
-            </p>
+
+          {/* Coluna 3: Redes sociais oficiais */}
+          <div className="footer-col col-social">
+            <p className="footer-label">Redes sociais</p>
+            <div className="footer-social-links">
+              <a
+                href={REDES_SOCIAIS.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon-link"
+                aria-label="Instagram da Nozes Ink"
+                onClick={() => trackEvent('clique_rede_social', { rede: 'instagram' })}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+                <span>Instagram</span>
+              </a>
+
+              <a
+                href={REDES_SOCIAIS.facebook}
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon-link"
+                aria-label="Facebook da Nozes Ink"
+                onClick={() => trackEvent('clique_rede_social', { rede: 'facebook' })}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+                <span>Facebook</span>
+              </a>
+
+              <a
+                href={REDES_SOCIAIS.tiktok}
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon-link"
+                aria-label="TikTok da Nozes Ink"
+                onClick={() => trackEvent('clique_rede_social', { rede: 'tiktok' })}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.94-4.52V8.75a8.23 8.23 0 0 0 4.83 1.57V6.87a4.85 4.85 0 0 1-1-.18z" />
+                </svg>
+                <span>TikTok</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Coluna 4: Mapa Google Maps (somente quando MAPS_EMBED_URL preenchido) */}
+          <div className="footer-col col-map" ref={mapContainerRef}>
+            <p className="footer-label">Localização no mapa</p>
+            {MAPS_EMBED_URL && MAPS_EMBED_URL.trim().length > 0 ? (
+              loadMap ? (
+                <iframe
+                  src={MAPS_EMBED_URL}
+                  title="Localização da Nozes Ink em Joinville, SC"
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  className="footer-map-frame"
+                />
+              ) : (
+                <div className="footer-map-skeleton">
+                  <span>Carregando mapa...</span>
+                </div>
+              )
+            ) : (
+              <div className="footer-map-fallback">
+                <p>{ENDERECO_RODAPE}</p>
+                <a
+                  href={mapsSearchUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-maps-link"
+                >
+                  <ExternalLink size={15} aria-hidden="true" /> Ver no Google Maps
+                </a>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Barra inferior */}
         <div className="shell footer-bottom">
-          <p>© {new Date().getFullYear()} Nozes Ink. Joinville, Santa Catarina.</p>
+          <div className="footer-bottom-links">
+            <Link to="/politica-de-privacidade">Política de privacidade</Link>
+            <span aria-hidden="true">•</span>
+            <span>Cookies essenciais</span>
+          </div>
+          <p>© 2026 Nozes Ink. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

@@ -7,44 +7,52 @@ import {
   PanelsTopLeft,
   ShoppingBag,
 } from 'lucide-react'
-import { SEGMENTOS } from '@/lib/site'
 
-interface SegmentDetails {
+/* ==========================================================================
+   SEÇÃO PARA QUEM É
+   - Título: "Para negócios que vendem pelo WhatsApp, pelo Google e pelo catálogo."
+   - 5 segmentos específicos:
+     1. Móveis planejados
+     2. Esquadrias e serviços residenciais
+     3. Automotivo
+     4. Varejo local
+     5. Serviços profissionais
+   - Garantia: NUNCA renderizar undefined (prevenção contra "Element type is invalid")
+   ========================================================================== */
+
+interface SegmentItem {
+  titulo: string
+  descricao: string
   icon: LucideIcon
-  description: string
 }
 
-const SEGMENT_DETAILS: Record<string, SegmentDetails> = {
-  'Móveis planejados': {
+const AUDIENCE_SEGMENTS: SegmentItem[] = [
+  {
+    titulo: 'Móveis planejados',
+    descricao: 'Projetos, medidas e orçamentos organizados sem perda de contexto.',
     icon: PanelsTopLeft,
-    description: 'Projetos, medidas e orçamentos com informação organizada.',
   },
-  'Esquadrias e serviços residenciais': {
+  {
+    titulo: 'Esquadrias e serviços residenciais',
+    descricao: 'Solicitações de clientes e especificações encaminhadas com rapidez.',
     icon: House,
-    description: 'Solicitações residenciais encaminhadas com mais contexto.',
   },
-  Automotivo: {
+  {
+    titulo: 'Automotivo',
+    descricao: 'Atendimentos, agendamento de serviços e dúvidas com fluxo rápido.',
     icon: CarFront,
-    description: 'Atendimento, serviços e agendamentos em um fluxo claro.',
   },
-  'Varejo local': {
+  {
+    titulo: 'Varejo local',
+    descricao: 'Catálogo de produtos sempre visível e fácil de consultar no WhatsApp.',
     icon: ShoppingBag,
-    description: 'Produtos e contatos fáceis de consultar e acompanhar.',
   },
-  'Serviços profissionais': {
+  {
+    titulo: 'Serviços profissionais',
+    descricao: 'Agenda conectada, presença no Google e captação de contatos qualificados.',
     icon: BriefcaseBusiness,
-    description: 'Presença, agenda e relacionamento conectados à rotina.',
   },
-  Outro: {
-    icon: HelpCircle,
-    description: 'Gargalos mapeados e soluções digitais sob medida para a sua operação.',
-  },
-}
-
-const DEFAULT_SEGMENT_DETAILS: SegmentDetails = {
-  icon: HelpCircle,
-  description: 'Gargalos mapeados e soluções digitais sob medida para a sua operação.',
-}
+]
 
 export function AudienceSection() {
   return (
@@ -52,23 +60,23 @@ export function AudienceSection() {
       <div className="shell">
         <div className="audience-heading" data-reveal>
           <p className="eyebrow">Para quem é</p>
-          <h2 id="audience-title">Negócios com uma operação real para destravar.</h2>
+          <h2 id="audience-title">
+            Para negócios que vendem pelo WhatsApp, pelo Google e pelo catálogo.
+          </h2>
         </div>
-        <div
-          className="audience-row"
-          tabIndex={0}
-          aria-label="Segmentos atendidos, role horizontal no celular"
-        >
-          {SEGMENTOS.map((segment) => {
-            const detail = SEGMENT_DETAILS[segment] || DEFAULT_SEGMENT_DETAILS
-            const Icon = detail.icon || HelpCircle
-            const description = detail.description || DEFAULT_SEGMENT_DETAILS.description
+        <div className="audience-row" tabIndex={0} aria-label="Segmentos atendidos pela Nozes Ink">
+          {AUDIENCE_SEGMENTS.map((segment) => {
+            const Icon = segment.icon || HelpCircle
+            const titulo = segment.titulo || 'Segmento'
+            const descricao = segment.descricao || ''
 
             return (
-              <article key={segment}>
-                {Icon ? <Icon size={23} aria-hidden="true" /> : null}
-                <h3>{segment}</h3>
-                <p>{description}</p>
+              <article key={titulo} data-reveal>
+                <div className="audience-icon-wrap" aria-hidden="true">
+                  <Icon size={24} />
+                </div>
+                <h3>{titulo}</h3>
+                <p>{descricao}</p>
               </article>
             )
           })}

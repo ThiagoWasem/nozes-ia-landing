@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MapPin, Globe, TrendingUp, Users, Clock } from 'lucide-react'
-import { CASOS } from '@/lib/site'
+import { CASOS, CASOS_VISIVEIS } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
 import { SectionHeading } from './SectionHeading'
 
@@ -21,7 +21,6 @@ const areaIcons: Record<
 const incomplete = (value: string | undefined) =>
   !value || /^\[(preencher|foto|print|vazio|url ou vazio)\]$/i.test(value.trim())
 
-// Componente de slider antes/depois para casos com autorização expressa
 function BeforeAfterSlider({
   antes,
   depois,
@@ -66,7 +65,9 @@ function BeforeAfterSlider({
 }
 
 export function CasesSection() {
-  // A seção "Resultados de clientes" permanece SEMPRE visível, mesmo sem casos autorizados.
+  // Conforme o prompt: CASOS_VISIVEIS = false mantém a seção de casos reais oculta até haver material autorizado.
+  if (!CASOS_VISIVEIS) return null
+
   return (
     <section className="section cases-section" aria-labelledby="cases-title">
       <div className="shell">
@@ -98,7 +99,6 @@ export function CasesSection() {
                 </div>
 
                 {!isAuthorized ? (
-                  /* COM autorizado: false, cada card mostra moldura evergreen, ícone da área e o rótulo "Caso em preparação". Sem texto, número, foto ou depoimento fictício. */
                   <div className="case-pending-frame" role="status">
                     <div className="case-pending-icon-wrap">
                       <Icon size={32} aria-hidden="true" />
@@ -109,7 +109,6 @@ export function CasesSection() {
                     </div>
                   </div>
                 ) : (
-                  /* COM autorizado: true, mostra os campos cadastrados sem alterar o layout */
                   <div className="case-authorized-content">
                     {!incomplete(item.metrica.valor) && (
                       <div className="case-metric">

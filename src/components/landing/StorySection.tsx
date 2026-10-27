@@ -2,33 +2,43 @@ import { Check, MessageCircle } from 'lucide-react'
 import { CONFIG } from '@/lib/site'
 import { SectionHeading } from './SectionHeading'
 
+/* ==========================================================================
+   STORYTELLING (sticky, somente a partir de 1024 px)
+   - Celular ilustrativo próprio (sem marcas de terceiros).
+   - Ao rolar: mensagens sobem na tela, indicadores sobem de valor:
+     "Atendimentos automáticos", "Agendamentos", "Leads no CRM"
+   - Gráfico em gold cresce.
+   - Rótulo "Dados ilustrativos" visível.
+   - Abaixo de 1024 px: sequência vertical sem pin.
+   ========================================================================== */
+
 const moments = [
-  ['Conversa organizada', 'A mensagem entra com contexto e segue para o atendimento certo.'],
-  ['Acompanhamento visível', 'O contato deixa de ficar perdido entre conversas e lembretes.'],
-  ['Evolução contínua', 'A operação ganha informação para decidir o próximo ajuste.'],
+  ['Atendimentos automáticos', 'A mensagem entra com contexto e dúvidas são resolvidas na hora.'],
+  ['Agendamentos confirmados', 'O horário é alinhado direto com a agenda sem conflito de data.'],
+  ['Leads no CRM', 'O contato é registrado com todo o histórico para a equipe acompanhar.'],
 ]
 
 function PhoneStory() {
   return (
-    <div className="story-phone" aria-label="Celular ilustrativo mostrando conversas organizadas">
+    <div className="story-phone" aria-label="Demonstração ilustrativa em celular">
       <div className="phone-speaker" aria-hidden="true" />
       <div className="phone-header">
-        <MessageCircle size={16} />
-        <span>Atendimento</span>
-        <i />
+        <MessageCircle size={16} aria-hidden="true" />
+        <span>Atendimento Nozes Ink</span>
+        <i aria-hidden="true" />
       </div>
       <div className="phone-messages">
-        <div data-story-message>Preciso de um orçamento para meu projeto.</div>
-        <div data-story-message>Perfeito. Vou organizar as informações necessárias.</div>
+        <div data-story-message>Olá! Gostaria de saber os horários para atendimento amanhã.</div>
+        <div data-story-message>Olá! Temos vaga amanhã às 14h ou às 16h30. Qual prefere?</div>
         <div data-story-message>
-          Contato registrado para acompanhamento.
+          Às 14h perfeito!
           <span>
-            <Check size={11} /> pronto
+            <Check size={11} aria-hidden="true" /> Agendado e registrado no CRM
           </span>
         </div>
       </div>
       <div className="phone-input" aria-hidden="true">
-        Mensagem <span>↗</span>
+        <span>Mensagem</span> <span>↗</span>
       </div>
     </div>
   )
@@ -37,25 +47,31 @@ function PhoneStory() {
 function StoryIndicators() {
   return (
     <div className="story-indicators">
-      <p className="story-kicker">Cenário ilustrativo</p>
-      <strong data-story-indicator>Organizando conversas</strong>
+      <p className="story-kicker">Dados ilustrativos</p>
+      <strong data-story-indicator>Atendimentos automáticos</strong>
       <div className="indicator-grid">
         <div>
-          <span data-counter data-target="24">
+          <span data-counter data-target="32">
             0
           </span>
-          <small>mensagens organizadas</small>
+          <small>Atendimentos automáticos</small>
         </div>
         <div>
-          <span data-counter data-target="8">
+          <span data-counter data-target="14">
             0
           </span>
-          <small>contatos acompanhados</small>
+          <small>Agendamentos</small>
+        </div>
+        <div>
+          <span data-counter data-target="19">
+            0
+          </span>
+          <small>Leads no CRM</small>
         </div>
       </div>
       <div className="story-chart">
-        <span>Fluxo acompanhado</span>
-        <svg viewBox="0 0 420 150" role="img" aria-label="Gráfico ilustrativo de evolução do fluxo">
+        <span>Evolução dos atendimentos</span>
+        <svg viewBox="0 0 420 150" role="img" aria-label="Gráfico ilustrativo de evolução">
           <path
             className="chart-area"
             d="M12 135 C70 130 86 116 132 120 S205 80 250 91 S330 36 408 21 L408 145 L12 145 Z"
@@ -82,7 +98,7 @@ export function StorySection() {
           <SectionHeading
             eyebrow="Da conversa ao acompanhamento"
             title="Quando o processo se conecta, o trabalho deixa rastros úteis."
-            description="Uma mensagem pode virar contexto, ação e acompanhamento sem transformar a operação em uma coleção de ferramentas."
+            description="Uma mensagem vira contexto, ação e acompanhamento sem transformar a operação em uma coleção confusa de ferramentas."
             light
           />
           <div className="story-moments-mobile">
