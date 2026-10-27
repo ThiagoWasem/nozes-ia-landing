@@ -30,6 +30,15 @@ export function useLandingMotion() {
       if (readingBar) {
         readingBar.style.setProperty('--scroll-progress', `${Math.round(pageProgress * 100)}%`)
       }
+
+      // Animação das transições cinematográficas claro/escuro via GPU transform/opacity
+      const transitionDividers = document.querySelectorAll<HTMLElement>('[data-transition-divider]')
+      transitionDividers.forEach((divider) => {
+        const rect = divider.getBoundingClientRect()
+        // Progresso de entrada do divisor na tela (0 quando entra por baixo, 1 quando atinge o meio/topo)
+        const progress = clamp((viewport - rect.top) / (viewport * 0.75), 0, 1)
+        divider.style.setProperty('--transition-progress', progress.toFixed(3))
+      })
     }
 
     const requestRender = () => {

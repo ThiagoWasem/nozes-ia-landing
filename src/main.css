@@ -873,6 +873,97 @@ html.js-reveal [data-reveal].is-revealed {
   color: var(--offwhite);
   background: var(--graphite);
 }
+
+/* Carrossel mobile para Soluções Digitais */
+.features-carousel-mobile-wrapper {
+  display: none;
+}
+.desktop-only-bento {
+  display: grid;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-bento {
+    display: none !important;
+  }
+  .features-carousel-mobile-wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  .features-carousel-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.25, 1);
+    will-change: transform;
+    touch-action: pan-y;
+  }
+  .features-mobile-slide {
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 4px;
+  }
+  .feature-mobile-card {
+    min-height: auto;
+    height: auto;
+    padding: 22px 18px;
+  }
+  .feature-slide-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+  .features-mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 22px;
+    gap: 12px;
+  }
+  .features-control-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(242, 240, 234, 0.2);
+    background: rgba(20, 22, 21, 0.9);
+    color: var(--offwhite);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .features-control-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--evergreen);
+  }
+  .features-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-width: calc(100% - 110px);
+  }
+  .features-dot {
+    width: 18px;
+    height: 5px;
+    border-radius: 3px;
+    border: 0;
+    background: rgba(242, 240, 234, 0.2);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+  }
+  .features-dot.is-active {
+    width: 32px;
+    background: var(--gold);
+  }
+}
 .features-section .section-heading > p:last-child {
   color: rgba(242, 240, 234, 0.62);
 }
@@ -2298,19 +2389,56 @@ html.js-reveal [data-reveal].is-revealed {
   }
   .method-map {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
   .method-step {
     display: grid;
-    grid-template-columns: 52px 1fr;
-    column-gap: 16px;
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 20px;
+    align-items: start;
+  }
+  .method-node-wrapper {
+    margin-bottom: 0;
+    align-self: start;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .method-node {
+    width: 50px;
+    height: 50px;
+  }
+  .method-node span {
+    font-size: 12px;
+  }
+  .method-step.is-current .method-node {
+    transform: scale(1.04);
+  }
+  .method-step-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 2px;
+  }
+  .method-phase-tag {
+    margin-bottom: 3px;
   }
   .method-step h3 {
-    align-self: center;
-    margin: 0;
+    align-self: auto;
+    margin: 0 0 6px;
+    font-size: 18px;
+    line-height: 1.25;
   }
   .method-step p {
     grid-column: 2;
+    max-width: none;
+    font-size: 13.5px;
+    line-height: 1.5;
   }
   .bento-grid {
     grid-template-columns: 1fr;
@@ -2462,6 +2590,12 @@ html.js-reveal [data-reveal].is-revealed {
   [data-scroll-card] {
     opacity: 1 !important;
     transform: none !important;
+  }
+  .transition-veil,
+  .transition-crest,
+  .transition-beam {
+    transform: none !important;
+    opacity: 1 !important;
   }
   [data-orbit] {
     transform: none !important;
@@ -2732,6 +2866,86 @@ html.js-reveal [data-reveal].is-revealed {
   background: rgba(192, 142, 75, 0.15);
   color: var(--gold);
   margin-bottom: 12px;
+}
+
+/* Carrossel mobile para a seção Para Quem É */
+.audience-carousel-mobile-wrapper {
+  display: none;
+}
+.desktop-only-grid {
+  display: grid;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-grid {
+    display: none !important;
+  }
+  .audience-carousel-mobile-wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  .audience-carousel-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.25, 1);
+    will-change: transform;
+    touch-action: pan-y;
+  }
+  .audience-mobile-slide {
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 4px;
+  }
+  .audience-mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 22px;
+    gap: 12px;
+  }
+  .audience-control-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(242, 240, 234, 0.2);
+    background: rgba(27, 28, 27, 0.85);
+    color: var(--offwhite);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .audience-control-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--evergreen);
+  }
+  .audience-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-width: calc(100% - 110px);
+  }
+  .audience-dot {
+    width: 18px;
+    height: 5px;
+    border-radius: 3px;
+    border: 0;
+    background: rgba(242, 240, 234, 0.2);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+  }
+  .audience-dot.is-active {
+    width: 32px;
+    background: var(--gold);
+  }
 }
 
 /* Formulário Curto e LGPD link com espaçamento independente */
@@ -3339,7 +3553,7 @@ html.js-reveal [data-reveal].is-revealed {
   border-color: var(--gold);
   background: var(--evergreen);
   box-shadow: 0 0 24px rgba(192, 142, 75, 0.45);
-  transform: scale(1.12);
+  transform: scale(1.08);
 }
 .method-step.is-current .method-node span {
   color: var(--offwhite);
@@ -3884,191 +4098,205 @@ html.js-reveal [data-reveal].is-revealed {
 
 /* Transição Hero (offwhite) -> Raio-X */
 .divider-hero-to-raiox {
-  height: 48px;
-  background: linear-gradient(180deg, var(--offwhite) 0%, rgba(242, 240, 234, 0.95) 100%);
-}
-.divider-hero-to-raiox::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 50%, rgba(192, 142, 75, 0.08) 0%, transparent 70%);
-  animation: gradient-breathe 10s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+  height: 36px;
+  background: var(--offwhite);
 }
 
 /* Transição Raio-X -> Método Gargalo */
 .divider-raiox-to-method {
-  height: 48px;
-  background: linear-gradient(180deg, var(--offwhite) 0%, rgba(242, 240, 234, 0.95) 100%);
-}
-.divider-raiox-to-method::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 50%, rgba(60, 98, 86, 0.08) 0%, transparent 70%);
-  animation: gradient-breathe 11s ease-in-out infinite alternate-reverse;
-  will-change: transform, opacity;
+  height: 36px;
+  background: var(--offwhite);
 }
 
-/* Transição para fundo Graphite escuro (consumindo a tela suavemente) */
-.divider-to-graphite {
-  height: 140px;
+/* Transição Claro -> Escuro com avanço cinematográfico fluido (Método -> Soluções Graphite) */
+.transition-light-to-dark {
+  position: relative;
+  width: 100%;
+  height: 160px;
   margin-top: -30px;
-  margin-bottom: -30px;
+  margin-bottom: -1px;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  z-index: 4;
+}
+.transition-light-to-dark .transition-veil {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(27, 28, 27, 0.7) 45%,
+    rgba(27, 28, 27, 0.45) 35%,
+    rgba(27, 28, 27, 0.88) 75%,
     var(--graphite) 100%
   );
-}
-.divider-to-graphite::before {
-  content: '';
-  position: absolute;
-  inset: -20% -10%;
-  background: radial-gradient(
-    ellipse 60% 80% at 50% 100%,
-    rgba(60, 98, 86, 0.35) 0%,
-    rgba(192, 142, 75, 0.12) 50%,
-    transparent 80%
-  );
-  animation: gradient-breathe 8s ease-in-out infinite alternate;
   will-change: transform, opacity;
+  transform: translate3d(0, calc((1 - var(--transition-progress, 0)) * 24px), 0);
+  opacity: calc(0.4 + var(--transition-progress, 0) * 0.6);
 }
-.cinematic-gradient-dark {
+.transition-light-to-dark .transition-crest {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 100%, rgba(60, 98, 86, 0.28) 0%, transparent 70%);
+  background: radial-gradient(
+    ellipse 85% 65% at 50% 100%,
+    rgba(60, 98, 86, 0.5) 0%,
+    rgba(27, 28, 27, 0.8) 55%,
+    transparent 85%
+  );
+  will-change: transform, opacity;
+  transform: scaleY(calc(0.7 + var(--transition-progress, 0) * 0.35));
 }
-.cinematic-glow-beam {
+.transition-light-to-dark .transition-beam {
   position: absolute;
   bottom: 0;
-  left: 5%;
-  right: 5%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(192, 142, 75, 0.55) 50%, transparent);
-  animation: beam-shimmer 7s ease-in-out infinite alternate;
-  will-change: opacity, transform;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba(192, 142, 75, 0.3) 25%,
+    var(--gold) 50%,
+    rgba(192, 142, 75, 0.3) 75%,
+    transparent 95%
+  );
+  box-shadow:
+    0 0 16px rgba(192, 142, 75, 0.65),
+    0 0 32px rgba(192, 142, 75, 0.3);
+  will-change: transform, opacity;
+  opacity: calc(0.35 + var(--transition-progress, 0) * 0.65);
+  transform: scaleX(calc(0.8 + var(--transition-progress, 0) * 0.2));
 }
 
 /* Transição Graphite -> Evergreen */
 .divider-graphite-to-evergreen {
-  height: 120px;
-  margin-top: -20px;
-  margin-bottom: -20px;
+  height: 100px;
+  margin-top: -10px;
+  margin-bottom: -10px;
   background: linear-gradient(
     180deg,
     var(--graphite) 0%,
-    rgba(31, 59, 51, 0.85) 55%,
+    rgba(31, 59, 51, 0.8) 60%,
     var(--evergreen) 100%
   );
-}
-.divider-graphite-to-evergreen::before {
-  content: '';
-  position: absolute;
-  inset: -15% 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(192, 142, 75, 0.15) 0%,
-    rgba(31, 59, 51, 0.3) 60%,
-    transparent 80%
-  );
-  animation: gradient-drift 9s ease-in-out infinite alternate;
-  will-change: transform, opacity;
 }
 
 /* Costura elegante entre Evergreen e Para Quem É */
 .divider-evergreen-seamless {
-  height: 50px;
+  height: 36px;
   background: var(--evergreen);
   position: relative;
-}
-.divider-evergreen-seamless::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 50%, rgba(192, 142, 75, 0.12) 0%, transparent 75%);
-  animation: gradient-breathe 10s ease-in-out infinite alternate;
 }
 .cinematic-gold-seam {
   width: 100%;
   height: 1px;
-  margin-top: 25px;
-  background: linear-gradient(90deg, transparent 5%, rgba(192, 142, 75, 0.28) 50%, transparent 95%);
+  margin-top: 18px;
+  background: linear-gradient(90deg, transparent 5%, rgba(192, 142, 75, 0.3) 50%, transparent 95%);
 }
 
-/* Transição Escuro -> Claro (Para quem é -> Depoimentos) */
-.divider-dark-to-light {
-  height: 130px;
-  margin-top: -20px;
-  margin-bottom: -20px;
+/* Transição Escuro -> Claro (Para quem é [Evergreen] -> Depoimentos [Offwhite]) */
+.transition-dark-to-light {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  margin-top: -30px;
+  margin-bottom: -1px;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  z-index: 4;
+}
+.transition-dark-to-light .transition-veil {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     180deg,
     var(--evergreen) 0%,
-    rgba(60, 98, 86, 0.5) 45%,
-    rgba(242, 240, 234, 0.7) 75%,
+    rgba(60, 98, 86, 0.6) 35%,
+    rgba(242, 240, 234, 0.85) 80%,
     var(--offwhite) 100%
   );
-}
-.divider-dark-to-light::before {
-  content: '';
-  position: absolute;
-  inset: -20% 0;
-  background: radial-gradient(
-    ellipse 70% 60% at 50% 40%,
-    rgba(192, 142, 75, 0.14) 0%,
-    transparent 70%
-  );
-  animation: gradient-drift 11s ease-in-out infinite alternate;
   will-change: transform, opacity;
+  transform: translate3d(0, calc((1 - var(--transition-progress, 0)) * -18px), 0);
+  opacity: calc(0.45 + var(--transition-progress, 0) * 0.55);
+}
+.transition-dark-to-light .transition-crest {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 85% 65% at 50% 0%, rgba(31, 59, 51, 0.6) 0%, transparent 80%);
+}
+.transition-dark-to-light .transition-beam {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba(192, 142, 75, 0.25) 30%,
+    var(--gold) 50%,
+    rgba(192, 142, 75, 0.25) 70%,
+    transparent 95%
+  );
+  box-shadow: 0 0 14px rgba(192, 142, 75, 0.55);
+  will-change: transform, opacity;
+  opacity: calc(0.4 + var(--transition-progress, 0) * 0.6);
+  transform: scaleX(calc(0.85 + var(--transition-progress, 0) * 0.15));
 }
 
-/* Transição Claro -> Escuro (Depoimentos -> MidCta) */
-.divider-light-to-dark {
-  height: 120px;
-  margin-top: -20px;
-  margin-bottom: -20px;
+/* Transição Claro -> Escuro (Depoimentos [Offwhite] -> MidCta [Evergreen]) */
+.transition-light-to-dark.variant-evergreen .transition-veil {
   background: linear-gradient(
     180deg,
-    var(--offwhite) 0%,
-    rgba(242, 240, 234, 0.4) 30%,
-    rgba(31, 59, 51, 0.75) 70%,
+    transparent 0%,
+    rgba(60, 98, 86, 0.4) 30%,
+    rgba(31, 59, 51, 0.85) 70%,
     var(--evergreen) 100%
   );
 }
-.divider-light-to-dark::before {
-  content: '';
-  position: absolute;
-  inset: -20% 0;
-  background: radial-gradient(
-    ellipse 70% 60% at 50% 60%,
-    rgba(60, 98, 86, 0.25) 0%,
-    transparent 70%
-  );
-  animation: gradient-breathe 10s ease-in-out infinite alternate-reverse;
-  will-change: transform, opacity;
-}
 
-/* Transição para a seção de formulário final */
-.divider-to-form {
-  height: 110px;
-  margin-top: -20px;
-  margin-bottom: -20px;
+/* Transição para a seção de formulário final (Evergreen -> Offwhite) */
+.transition-to-form {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  margin-top: -24px;
+  margin-bottom: -1px;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  z-index: 4;
+}
+.transition-to-form .transition-veil {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     180deg,
     var(--evergreen) 0%,
-    rgba(60, 98, 86, 0.45) 40%,
-    rgba(242, 240, 234, 0.7) 75%,
+    rgba(60, 98, 86, 0.5) 40%,
+    rgba(242, 240, 234, 0.85) 80%,
     var(--offwhite) 100%
   );
-}
-.divider-to-form::before {
-  content: '';
-  position: absolute;
-  inset: -15% 0;
-  background: radial-gradient(ellipse at 50% 50%, rgba(192, 142, 75, 0.16) 0%, transparent 75%);
-  animation: gradient-drift 12s ease-in-out infinite alternate;
   will-change: transform, opacity;
+  transform: translate3d(0, calc((1 - var(--transition-progress, 0)) * -16px), 0);
+  opacity: calc(0.5 + var(--transition-progress, 0) * 0.5);
+}
+.transition-to-form .transition-beam {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba(192, 142, 75, 0.3) 30%,
+    var(--gold) 50%,
+    rgba(192, 142, 75, 0.3) 70%,
+    transparent 95%
+  );
+  box-shadow: 0 0 14px rgba(192, 142, 75, 0.55);
 }
 
 /* Animações fluidas GPU-accelerated dos degradês */

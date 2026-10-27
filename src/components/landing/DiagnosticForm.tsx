@@ -107,6 +107,52 @@ export function validateWhatsAppDigits(raw: string): { valid: boolean; message?:
   return { valid: true }
 }
 
+/* ==========================================================================
+   SEGURANÇA E HIGIENIZAÇÃO DE ENTRADAS (LGPD & Anti-Abuso)
+   - sanitizeInput: remove caracteres de controle invisíveis, tags HTML e aplica trim
+   - checkSessionRateLimit: impede spam limitando a 1 envio por sessão a cada 30 segundos
+   - ZERO logs em console de dados pessoais do lead (privacidade garantida)
+   ========================================================================== */
+function sanitizeInput(value: string): string {
+  if (!value) return ''
+  return (
+    value
+      // Remove caracteres de controle mantendo texto legível e prevenindo injeções
+      // oxlint-disable-next-line eslint(no-control-regex)
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+      // Remove tags HTML para prevenir XSS armazenado
+      .replace(/<[^>]*>?/gm, '')
+      .trim()
+  )
+}
+
+const RATE_LIMIT_STORAGE_KEY = 'nozes_ink_last_submit_time'
+const RATE_LIMIT_COOLDOWN_MS = 30 * 1000 // 30 segundos de intervalo mínimo entre envios
+
+function getRateLimitRemainingSeconds(): number {
+  try {
+    const raw = sessionStorage.getItem(RATE_LIMIT_STORAGE_KEY)
+    if (!raw) return 0
+    const lastTime = parseInt(raw, 10)
+    const elapsed = Date.now() - lastTime
+    if (elapsed < RATE_LIMIT_COOLDOWN_MS) {
+      return Math.ceil((RATE_LIMIT_COOLDOWN_MS - elapsed) / 1000)
+    }
+  } catch {
+    // sessionStorage indisponível (modo restrito ou sem permissão)
+  }
+  return 0
+}
+
+function recordSubmissionTimestamp(): void {
+  try {
+    sessionStorage.setItem(RATE_LIMIT_STORAGE_KEY, String(Date.now()))
+  } catch {
+    // Modo privado silencioso
+  }
+}
+
 interface FormState {
   nome: string
   empresa: string
@@ -185,17 +231,27 @@ function ShortDiagnosticForm() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
 
-    // Verificação de honeypot anti-spam: se preenchido, rejeita silenciosamente
+    // 1. Verificação de honeypot anti-spam: se preenchido, rejeita silenciosamente
     if (form.website_trap && form.website_trap.trim().length > 0) {
-      // Simula sucesso sem persistir nada
+      // Simula sucesso sem persistir nada (sem spam no banco)
       setSuccess(true)
       return
     }
 
+    // 2. Rate limit simples por sessão: bloqueia reenvio em menos de 30 segundos
+    const remainingCooldown = getRateLimitRemainingSeconds()
+    if (remainingCooldown > 0) {
+      setErrors({
+        formulario: `Aguarde ${remainingCooldown} segundo${remainingCooldown > 1 ? 's' : ''} antes de enviar novamente.`,
+      })
+      return
+    }
+
+    // 3. Validação dos dados sanitizados
     const validationErrors = validate()
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
-      // PONTO DE ANALYTICS: erro de validação
+      // PONTO DE ANALYTICS: erro de validação (nenhum dado de lead é registrado no evento)
       trackEvent('envio_formulario', { resultado: 'erro_validacao', tipo: 'curto' })
       const firstKey = Object.keys(validationErrors)[0]
       document.getElementById(`short-${firstKey}`)?.focus()
@@ -204,7 +260,6 @@ function ShortDiagnosticForm() {
 
     setLoading(true)
     setErrors({})
-    // PONTO DE ANALYTICS: tentativa de envio
     trackEvent('envio_formulario', {
       resultado: 'iniciado',
       tipo: 'curto',
@@ -213,23 +268,32 @@ function ShortDiagnosticForm() {
 
     try {
       /* PONTO DE ENVIO AO POCKETBASE (coleção leads existente via VITE_POCKETBASE_URL):
-         Campos enviados: nome, empresa, whatsapp, segmento, consentimento_lgpd, origem, variante_hero */
+         Segurança: Entradas sanitizadas (trim, sem caracteres de controle e sem tags).
+         Privacidade: Nenhum dado sensível do lead é emitido em console do navegador. */
+      const cleanNome = sanitizeInput(form.nome)
+      const cleanEmpresa = sanitizeInput(form.empresa)
+      const cleanWhatsapp = sanitizeInput(form.whatsapp)
+      const cleanSegmento = sanitizeInput(form.segmento)
+
       await createLead({
-        nome: form.nome.trim(),
-        empresa: form.empresa.trim(),
-        whatsapp: form.whatsapp.trim(),
-        segmento: form.segmento,
+        nome: cleanNome,
+        empresa: cleanEmpresa,
+        whatsapp: cleanWhatsapp,
+        segmento: cleanSegmento,
         consentimento_lgpd: true,
         origem: 'formulario_curto',
         variante_hero: VARIANTE_HERO,
       })
 
-      // PONTO DE ANALYTICS: envio concluído com sucesso
+      // Registra timestamp de envio para o rate limit da sessão
+      recordSubmissionTimestamp()
+
+      // PONTO DE ANALYTICS: envio concluído com sucesso (apenas metadados não-pessoais)
       trackEvent('envio_formulario', {
         resultado: 'sucesso',
         tipo: 'curto',
         variante: VARIANTE_HERO,
-        segmento: form.segmento,
+        segmento: cleanSegmento,
       })
       setSuccess(true)
     } catch (error) {
@@ -396,7 +460,7 @@ function ShortDiagnosticForm() {
           <Link
             to="/politica-de-privacidade"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="privacy-inline-link"
           >
             Ler nossa Política de Privacidade (LGPD)
@@ -420,7 +484,7 @@ function ShortDiagnosticForm() {
             className="whatsapp-fallback-btn"
             href={WHATSAPP_URL}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             onClick={() => trackEvent('clique_whatsapp', { origem: 'falha_formulario_curto' })}
           >
             <MessageCircle size={16} aria-hidden="true" /> Falar no WhatsApp
@@ -444,7 +508,7 @@ function ShortDiagnosticForm() {
           className="whatsapp-button light"
           href={WHATSAPP_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           onClick={() => trackEvent('clique_whatsapp', { origem: 'formulario_curto' })}
         >
           <MessageCircle size={18} aria-hidden="true" /> Falar no WhatsApp
@@ -570,6 +634,15 @@ function SteppedDiagnosticForm() {
       return
     }
 
+    // Rate limit de 30 segundos na sessão
+    const remainingCooldown = getRateLimitRemainingSeconds()
+    if (remainingCooldown > 0) {
+      setErrors({
+        formulario: `Aguarde ${remainingCooldown} segundo${remainingCooldown > 1 ? 's' : ''} antes de enviar novamente.`,
+      })
+      return
+    }
+
     const step3Errors = validateStep3()
     if (Object.keys(step3Errors).length > 0) {
       setErrors(step3Errors)
@@ -588,26 +661,34 @@ function SteppedDiagnosticForm() {
     })
 
     try {
-      const origemDetalhada = form.problema
-        ? `formulario_etapas | problema: ${form.problema}`
+      const cleanNome = sanitizeInput(form.nome)
+      const cleanEmpresa = sanitizeInput(form.empresa)
+      const cleanWhatsapp = sanitizeInput(form.whatsapp)
+      const cleanSegmento = sanitizeInput(form.segmento)
+      const cleanProblema = sanitizeInput(form.problema)
+
+      const origemDetalhada = cleanProblema
+        ? `formulario_etapas | problema: ${cleanProblema}`
         : 'formulario_etapas'
 
       await createLead({
-        nome: form.nome.trim(),
-        empresa: form.empresa.trim(),
-        whatsapp: form.whatsapp.trim(),
-        segmento: form.segmento,
+        nome: cleanNome,
+        empresa: cleanEmpresa,
+        whatsapp: cleanWhatsapp,
+        segmento: cleanSegmento,
         consentimento_lgpd: true,
         origem: origemDetalhada,
         variante_hero: VARIANTE_HERO,
       })
 
+      recordSubmissionTimestamp()
+
       trackEvent('envio_formulario', {
         resultado: 'sucesso',
         tipo: 'etapas',
         variante: VARIANTE_HERO,
-        segmento: form.segmento,
-        problema: form.problema,
+        segmento: cleanSegmento,
+        problema: cleanProblema,
       })
       setSuccess(true)
     } catch (error) {
@@ -912,7 +993,7 @@ function SteppedDiagnosticForm() {
                 <Link
                   to="/politica-de-privacidade"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="privacy-inline-link"
                 >
                   Ler nossa Política de Privacidade (LGPD)
@@ -932,7 +1013,7 @@ function SteppedDiagnosticForm() {
                   className="whatsapp-fallback-btn"
                   href={WHATSAPP_URL}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   onClick={() =>
                     trackEvent('clique_whatsapp', { origem: 'falha_formulario_etapas' })
                   }
@@ -962,7 +1043,7 @@ function SteppedDiagnosticForm() {
                 className="whatsapp-button light"
                 href={WHATSAPP_URL}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 onClick={() => trackEvent('clique_whatsapp', { origem: 'formulario_etapas' })}
               >
                 <MessageCircle size={18} aria-hidden="true" /> Falar no WhatsApp

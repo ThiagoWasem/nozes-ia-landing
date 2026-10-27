@@ -102,7 +102,7 @@ export default function PrivacyPolicy() {
             <a
               href={WHATSAPP_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               onClick={() => trackEvent('clique_whatsapp', { origem: 'politica_privacidade' })}
             >
               <MessageCircle size={17} aria-hidden="true" /> Falar sobre seus dados

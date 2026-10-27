@@ -3,6 +3,8 @@ import {
   Bot,
   CalendarDays,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Code2,
   Cpu,
   Globe2,
@@ -496,8 +498,15 @@ function FeatureVisual({
 }
 
 export function FeaturesSection() {
+  const reduced = useReducedMotion()
   const [isInView, setIsInView] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+
+  // Controles do carrossel mobile
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const touchStartXRef = useRef(0)
+  const touchEndXRef = useRef(0)
 
   useEffect(() => {
     const el = sectionRef.current
@@ -514,6 +523,45 @@ export function FeaturesSection() {
     return () => observer.disconnect()
   }, [])
 
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % features.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + features.length) % features.length)
+  }
+
+  // Autoplay suave no mobile
+  useEffect(() => {
+    if (reduced || isPaused || !isInView) return
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % features.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [reduced, isPaused, isInView])
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true)
+    touchStartXRef.current = e.touches[0].clientX
+    touchEndXRef.current = e.touches[0].clientX
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    const diff = touchStartXRef.current - touchEndXRef.current
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        nextSlide()
+      } else {
+        prevSlide()
+      }
+    }
+    window.setTimeout(() => setIsPaused(false), 3500)
+  }
+
   if (CONFIG.modo_funcionalidades !== 'bento') return null
 
   return (
@@ -529,7 +577,90 @@ export function FeaturesSection() {
           title="Soluções digitais"
           description="Um sistema só. Do primeiro contato ao pós-venda."
         />
-        <div className="bento-grid">
+
+        {/* Carrossel mobile com swipe para Soluções (<= 768px) */}
+        <div className="features-carousel-mobile-wrapper" aria-label="Soluções digitais no celular">
+          <div
+            className="features-carousel-track"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={{ transform: `translate3d(-${currentSlide * 100}%, 0, 0)` }}
+          >
+            {features.map(({ title, benefit, entregamos, icon: Icon, demoType }, index) => {
+              return (
+                <div className="features-mobile-slide" key={title}>
+                  <article className="feature-card feature-mobile-card">
+                    <div className="feature-top-bar">
+                      <div className="feature-icon">
+                        <Icon size={20} aria-hidden="true" />
+                      </div>
+                      <span className="feature-slide-num">
+                        0{index + 1} / 0{features.length}
+                      </span>
+                    </div>
+
+                    <div className="feature-body-layout">
+                      <div className="feature-copy">
+                        <h3>{title}</h3>
+                        <p className="feature-benefit">{benefit}</p>
+                        <div className="feature-deliverables">
+                          <span className="deliverables-title">O que entregamos:</span>
+                          <ul>
+                            {entregamos.map((item) => (
+                              <li key={item}>
+                                <Check size={13} aria-hidden="true" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="feature-demo-container">
+                        <FeatureVisual demoType={demoType} isInView={isInView} />
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Controles do carrossel mobile de Soluções com 44px de toque */}
+          <div className="features-mobile-controls">
+            <button
+              type="button"
+              className="features-control-btn"
+              onClick={prevSlide}
+              aria-label="Solução anterior"
+            >
+              <ChevronLeft size={20} aria-hidden="true" />
+            </button>
+            <div className="features-dots" aria-label="Indicadores de soluções">
+              {features.map((feat, idx) => (
+                <button
+                  key={feat.title}
+                  type="button"
+                  className={`features-dot ${idx === currentSlide ? 'is-active' : ''}`}
+                  onClick={() => setCurrentSlide(idx)}
+                  aria-label={`Ir para solução ${idx + 1}: ${feat.title}`}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="features-control-btn"
+              onClick={nextSlide}
+              aria-label="Próxima solução"
+            >
+              <ChevronRight size={20} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        {/* Grade Bento original no Desktop (> 768px) */}
+        <div className="bento-grid desktop-only-bento">
           {features.map(({ title, benefit, entregamos, icon: Icon, size, demoType }) => {
             return (
               <article

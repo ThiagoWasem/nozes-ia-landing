@@ -27,7 +27,7 @@ function WhatsappLink({ source, dark = false }: { source: string; dark?: boolean
       className={`whatsapp-button ${dark ? 'dark' : ''}`}
       href={WHATSAPP_URL}
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       onClick={() => trackEvent('clique_whatsapp', { origem: source })}
     >
       <MessageCircle size={18} aria-hidden="true" /> Falar no WhatsApp
@@ -112,42 +112,49 @@ export default function Index() {
         {/* 3. MÉTODO GARGALO */}
         <MethodSection />
 
-        {/* Transição cinematográfica profunda: Método -> Bento (consumindo a tela com degradê escuro) */}
-        <div className="cinematic-divider divider-to-graphite" aria-hidden="true">
-          <div className="cinematic-gradient-dark" />
-          <div className="cinematic-glow-beam" />
+        {/* Transição cinematográfica real: Claro (offwhite) -> Escuro (graphite) consumindo a tela */}
+        <div className="transition-light-to-dark" data-transition-divider aria-hidden="true">
+          <div className="transition-veil" />
+          <div className="transition-crest" />
+          <div className="transition-beam" />
         </div>
 
         {/* 4. SOLUÇÕES DIGITAIS (bento grid - fundo graphite #1B1C1B) */}
         <FeaturesSection />
 
-        {/* Transição cinematográfica: Bento (graphite) -> Storytelling (evergreen #1F3B33) */}
-        <div className="cinematic-divider divider-graphite-to-evergreen" aria-hidden="true">
-          <div className="cinematic-curtain" />
-        </div>
+        {/* Transição Graphite -> Evergreen */}
+        <div className="divider-graphite-to-evergreen" aria-hidden="true" />
 
         {/* 5. STORYTELLING (evergreen #1F3B33) */}
         <StorySection />
 
-        {/* Transição cinematográfica: Storytelling -> Para Quem É */}
-        <div className="cinematic-divider divider-evergreen-seamless" aria-hidden="true">
+        {/* Costura sutil entre Storytelling e Para Quem É (ambos evergreen) */}
+        <div className="divider-evergreen-seamless" aria-hidden="true">
           <div className="cinematic-gold-seam" />
         </div>
 
         {/* 6. PARA QUEM É (evergreen #1F3B33) */}
         <AudienceSection />
 
-        {/* Transição cinematográfica: Para Quem É (escuro) -> Depoimentos (claro #F2F0EA) */}
-        <div className="cinematic-divider divider-dark-to-light" aria-hidden="true">
-          <div className="cinematic-curtain-light" />
+        {/* Transição cinematográfica real: Escuro (evergreen) -> Claro (offwhite) com feixe dourado */}
+        <div className="transition-dark-to-light" data-transition-divider aria-hidden="true">
+          <div className="transition-veil" />
+          <div className="transition-crest" />
+          <div className="transition-beam" />
         </div>
 
         {/* 7. O QUE NOSSOS CLIENTES DIZEM (DEPOIMENTOS_VISIVEIS = true, claro #F2F0EA) */}
         <TestimonialsSection />
 
-        {/* Transição cinematográfica: Depoimentos (claro) -> MidCta (evergreen) */}
-        <div className="cinematic-divider divider-light-to-dark" aria-hidden="true">
-          <div className="cinematic-curtain-dark" />
+        {/* Transição cinematográfica real: Claro (offwhite) -> Escuro (evergreen) */}
+        <div
+          className="transition-light-to-dark variant-evergreen"
+          data-transition-divider
+          aria-hidden="true"
+        >
+          <div className="transition-veil" />
+          <div className="transition-crest" />
+          <div className="transition-beam" />
         </div>
 
         {/* CTA intermediário (evergreen) */}
@@ -156,9 +163,10 @@ export default function Index() {
         {/* 8. CASOS REAIS (oculto enquanto CASOS_VISIVEIS = false) */}
         <CasesSection />
 
-        {/* Transição suave para a área de diagnóstico */}
-        <div className="cinematic-divider divider-to-form" aria-hidden="true">
-          <div className="cinematic-curtain-light" />
+        {/* Transição cinematográfica real: Escuro (evergreen) -> Claro (offwhite) para o formulário */}
+        <div className="transition-to-form" data-transition-divider aria-hidden="true">
+          <div className="transition-veil" />
+          <div className="transition-beam" />
         </div>
 
         {/* 9. DIAGNÓSTICO (formulário padrão curto; 3 etapas preparado para teste A/B) */}

@@ -263,7 +263,7 @@ export function TestimonialsSection() {
             <a
               href={GOOGLE_REVIEW_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="google-review-btn"
               onClick={() => trackEvent('clique_avalie_google')}
             >

@@ -3,6 +3,8 @@ import type { LucideIcon } from 'lucide-react'
 import {
   BriefcaseBusiness,
   CarFront,
+  ChevronLeft,
+  ChevronRight,
   Coffee,
   Dog,
   HelpCircle,
@@ -135,6 +137,51 @@ export function AudienceSection() {
     return () => cancelAnimationFrame(frameId)
   }, [reduced, isInView])
 
+  // Controles do carrossel mobile
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const touchStartXRef = useRef(0)
+  const touchEndXRef = useRef(0)
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % AUDIENCE_SEGMENTS.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + AUDIENCE_SEGMENTS.length) % AUDIENCE_SEGMENTS.length)
+  }
+
+  // Autoplay suave no mobile com pausa no toque
+  useEffect(() => {
+    if (reduced || isPaused || !isInView) return
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % AUDIENCE_SEGMENTS.length)
+    }, 3800)
+    return () => clearInterval(timer)
+  }, [reduced, isPaused, isInView])
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true)
+    touchStartXRef.current = e.touches[0].clientX
+    touchEndXRef.current = e.touches[0].clientX
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    const diff = touchStartXRef.current - touchEndXRef.current
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        nextSlide()
+      } else {
+        prevSlide()
+      }
+    }
+    window.setTimeout(() => setIsPaused(false), 3500)
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -157,7 +204,82 @@ export function AudienceSection() {
           </p>
         </div>
 
-        <div className="audience-grid" tabIndex={0} aria-label="Segmentos atendidos pela Nozes Ink">
+        {/* Visualização responsiva: Carrossel com swipe no mobile (<= 768px) e Grid limpo no desktop */}
+        <div
+          className="audience-carousel-mobile-wrapper"
+          aria-label="Segmentos atendidos no celular"
+        >
+          <div
+            className="audience-carousel-track"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={{ transform: `translate3d(-${currentIndex * 100}%, 0, 0)` }}
+          >
+            {AUDIENCE_SEGMENTS.map((segment, index) => {
+              const Icon = segment.icon || HelpCircle
+              const titulo = segment.titulo || 'Segmento'
+              const descricao = segment.descricao || ''
+              const isCurrent = index === currentIndex
+
+              return (
+                <div className="audience-mobile-slide" key={titulo}>
+                  <article className={`audience-card ${isCurrent ? 'is-highlighted' : ''}`}>
+                    <div className="audience-card-top">
+                      <div className="audience-icon-wrap" aria-hidden="true">
+                        <Icon size={22} />
+                      </div>
+                      <span className="audience-card-tag">{segment.tag}</span>
+                    </div>
+                    <h3>{titulo}</h3>
+                    <p>{descricao}</p>
+                    <div className="audience-card-indicator" aria-hidden="true">
+                      <span />
+                    </div>
+                  </article>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Controles e Indicadores de página mobile com alvos de 44px */}
+          <div className="audience-mobile-controls">
+            <button
+              type="button"
+              className="audience-control-btn"
+              onClick={prevSlide}
+              aria-label="Segmento anterior"
+            >
+              <ChevronLeft size={20} aria-hidden="true" />
+            </button>
+            <div className="audience-dots" aria-label="Indicadores dos segmentos">
+              {AUDIENCE_SEGMENTS.map((seg, idx) => (
+                <button
+                  key={seg.titulo}
+                  type="button"
+                  className={`audience-dot ${idx === currentIndex ? 'is-active' : ''}`}
+                  onClick={() => setCurrentIndex(idx)}
+                  aria-label={`Ir para segmento ${idx + 1}: ${seg.titulo}`}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="audience-control-btn"
+              onClick={nextSlide}
+              aria-label="Próximo segmento"
+            >
+              <ChevronRight size={20} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        {/* Grade tradicional no Desktop */}
+        <div
+          className="audience-grid desktop-only-grid"
+          tabIndex={0}
+          aria-label="Segmentos atendidos pela Nozes Ink"
+        >
           {AUDIENCE_SEGMENTS.map((segment, index) => {
             const Icon = segment.icon || HelpCircle
             const titulo = segment.titulo || 'Segmento'

@@ -258,7 +258,7 @@ export function Layout({ children }: LayoutProps) {
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="footer-action-link whatsapp"
                 onClick={() => trackEvent('clique_whatsapp', { origem: 'rodape' })}
               >
@@ -267,7 +267,7 @@ export function Layout({ children }: LayoutProps) {
               <a
                 href={mapsSearchUrl}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="footer-action-link maps"
                 onClick={() => trackEvent('clique_abrir_maps')}
               >
@@ -286,7 +286,7 @@ export function Layout({ children }: LayoutProps) {
               <a
                 href={REDES_SOCIAIS.instagram}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="social-card-link"
                 aria-label="Instagram oficial da Nozes Ink"
                 onClick={() => trackEvent('clique_rede_social', { rede: 'instagram' })}
@@ -316,7 +316,7 @@ export function Layout({ children }: LayoutProps) {
               <a
                 href={REDES_SOCIAIS.facebook}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="social-card-link"
                 aria-label="Facebook oficial da Nozes Ink"
                 onClick={() => trackEvent('clique_rede_social', { rede: 'facebook' })}
@@ -335,7 +335,7 @@ export function Layout({ children }: LayoutProps) {
               <a
                 href={REDES_SOCIAIS.tiktok}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="social-card-link"
                 aria-label="TikTok oficial da Nozes Ink"
                 onClick={() => trackEvent('clique_rede_social', { rede: 'tiktok' })}
@@ -382,7 +382,7 @@ export function Layout({ children }: LayoutProps) {
                 <a
                   href={mapsSearchUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="footer-action-link maps"
                 >
                   <ExternalLink size={14} aria-hidden="true" /> Ver no Google Maps
