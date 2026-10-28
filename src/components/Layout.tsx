@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { MessageCircle, MapPin, ExternalLink } from 'lucide-react'
 import { Logo } from '@/components/Logo'
@@ -12,6 +12,11 @@ import {
   MAPS_PLACE_ID,
 } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
+
+// Carregamento sob demanda do ChatWidget: o chunk e a conexão só são carregados quando o visitante interage
+const ChatWidget = lazy(() =>
+  import('@/components/chat/ChatWidget').then((mod) => ({ default: mod.ChatWidget })),
+)
 
 interface LayoutProps {
   children: ReactNode
@@ -34,6 +39,7 @@ export function Layout({ children }: LayoutProps) {
   const [showMobileFixedBar, setShowMobileFixedBar] = useState(false)
   const [isInputFocused, setIsInputFocused] = useState(false)
   const [loadMap, setLoadMap] = useState(false)
+  const [chatRequested, setChatRequested] = useState(false)
   const mapContainerRef = useRef<HTMLDivElement>(null)
 
   // Controle de scroll para o cabeçalho e para a barra fixa no mobile
@@ -408,6 +414,33 @@ export function Layout({ children }: LayoutProps) {
           <p>© 2026 Nozes Ink. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      {/* WIDGET DE CHAT IA (NOZES IA) — Carregamento sob demanda */}
+      {chatRequested ? (
+        <Suspense fallback={null}>
+          <ChatWidget isMobileBarVisible={showMobileFixedBar} isInputFocused={isInputFocused} />
+        </Suspense>
+      ) : (
+        /* Botão flutuante leve no DOM inicial; só dispara o chunk e a conexão ao clique */
+        <aside className="nozes-chat-root" aria-label="Assistente virtual Nozes IA">
+          <button
+            type="button"
+            className={`nozes-chat-trigger-btn ${
+              showMobileFixedBar && !isInputFocused ? 'has-mobile-bar' : ''
+            }`}
+            onClick={() => {
+              setChatRequested(true)
+              trackEvent('chat_iniciado_demanda', { origem: 'primeiro_clique' })
+            }}
+            aria-label="Abrir chat Nozes IA"
+          >
+            <span className="nozes-chat-trigger-icon" aria-hidden="true">
+              <MessageCircle size={25} />
+            </span>
+            <span className="nozes-chat-trigger-ping" aria-hidden="true" />
+          </button>
+        </aside>
+      )}
     </div>
   )
 }

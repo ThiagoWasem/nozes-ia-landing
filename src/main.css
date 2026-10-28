@@ -4735,3 +4735,630 @@ html.js-reveal [data-reveal].is-revealed {
     padding: 20px;
   }
 }
+
+/* ==========================================================================
+   WIDGET DE CHAT IA NATIVO — NOZES IA
+   - Botão flutuante dourado (desktop e mobile)
+   - Painel elegante em tema Evergreen/Graphite/Offwhite/Dourado
+   - Coexistência com barra fixa mobile e formulário sem sobreposição
+   - Micro animações em transform e opacity respeitando prefers-reduced-motion
+   ========================================================================== */
+.nozes-chat-root {
+  position: relative;
+  z-index: 95;
+}
+
+/* Botão Flutuante */
+.nozes-chat-trigger-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--graphite);
+  border: 2px solid rgba(27, 28, 27, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(192, 142, 75, 0.4);
+  z-index: 95;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.25, 1),
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    bottom 0.28s ease;
+  will-change: transform, bottom;
+}
+.nozes-chat-trigger-btn:hover {
+  transform: scale(1.06) translateY(-2px);
+  background: #cca05d;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.28),
+    0 4px 14px rgba(192, 142, 75, 0.5);
+}
+.nozes-chat-trigger-btn:active {
+  transform: scale(0.96);
+}
+.nozes-chat-trigger-btn.is-active {
+  background: var(--graphite);
+  color: var(--gold);
+  border-color: rgba(192, 142, 75, 0.5);
+}
+.nozes-chat-trigger-ping {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  opacity: 0.6;
+  animation: nozes-chat-ping 2.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+.nozes-chat-trigger-btn.is-active .nozes-chat-trigger-ping {
+  display: none;
+}
+@keyframes nozes-chat-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+.nozes-chat-badge-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #9b3f35;
+  color: var(--offwhite);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--white);
+}
+
+/* Painel de Conversa Desktop */
+.nozes-chat-panel {
+  position: fixed;
+  bottom: 94px;
+  right: 24px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 560px;
+  max-height: calc(100vh - 120px);
+  border-radius: 20px;
+  background: rgba(27, 28, 27, 0.98);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(192, 142, 75, 0.35);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 95;
+  opacity: 0;
+  transform: translateY(18px) scale(0.96);
+  pointer-events: none;
+  transition:
+    opacity 0.24s cubic-bezier(0.2, 0.8, 0.25, 1),
+    transform 0.24s cubic-bezier(0.2, 0.8, 0.25, 1),
+    bottom 0.28s ease;
+  will-change: opacity, transform, bottom;
+}
+.nozes-chat-panel.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Cabeçalho do Chat */
+.nozes-chat-header {
+  padding: 14px 18px;
+  background: rgba(31, 59, 51, 0.92);
+  border-bottom: 1px solid rgba(192, 142, 75, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.nozes-chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nozes-chat-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--graphite);
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nozes-chat-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #34d399;
+  border: 2px solid var(--graphite);
+}
+.nozes-chat-header-titles {
+  display: flex;
+  flex-direction: column;
+}
+.nozes-chat-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nozes-chat-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--offwhite);
+  letter-spacing: -0.01em;
+}
+.nozes-chat-badge {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.nozes-chat-subtitle {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: rgba(242, 240, 234, 0.72);
+}
+.nozes-chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nozes-chat-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 240, 234, 0.15);
+  background: rgba(27, 28, 27, 0.5);
+  color: rgba(242, 240, 234, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.nozes-chat-icon-btn:hover {
+  background: var(--gold);
+  color: var(--graphite);
+  border-color: var(--gold);
+}
+.nozes-chat-icon-btn.close-btn:hover {
+  background: rgba(242, 240, 234, 0.18);
+  color: var(--offwhite);
+  border-color: rgba(242, 240, 234, 0.35);
+}
+
+/* Área de Mensagens */
+.nozes-chat-messages-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: linear-gradient(180deg, rgba(27, 28, 27, 0.95) 0%, rgba(20, 22, 21, 0.98) 100%);
+  overscroll-behavior: contain;
+}
+.nozes-chat-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 88%;
+  animation: nozes-chat-bubble-enter 0.26s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  will-change: opacity, transform;
+}
+.nozes-chat-row.is-assistant {
+  align-self: flex-start;
+}
+.nozes-chat-row.is-user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.nozes-chat-row-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--evergreen);
+  color: var(--gold);
+  border: 1px solid rgba(192, 142, 75, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+.nozes-chat-bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.nozes-chat-row.is-user .nozes-chat-bubble-wrap {
+  align-items: flex-end;
+}
+.nozes-chat-bubble {
+  padding: 11px 14px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+.nozes-chat-bubble.assistant {
+  background: rgba(40, 44, 42, 0.95);
+  color: var(--offwhite);
+  border: 1px solid rgba(242, 240, 234, 0.12);
+  border-bottom-left-radius: 4px;
+}
+.nozes-chat-bubble.user {
+  background: var(--gold);
+  color: var(--graphite);
+  font-weight: 500;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(192, 142, 75, 0.25);
+}
+.nozes-chat-bubble-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.nozes-chat-timestamp {
+  font-size: 10px;
+  color: rgba(242, 240, 234, 0.45);
+  padding: 0 4px;
+}
+
+/* Micro-animação sutil de entrada das bolhas */
+@keyframes nozes-chat-bubble-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Indicador de Digitação */
+.nozes-chat-bubble.is-typing {
+  background: rgba(40, 44, 42, 0.95);
+  border: 1px solid rgba(242, 240, 234, 0.12);
+  border-bottom-left-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 16px;
+}
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: nozes-chat-typing 1.3s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes nozes-chat-typing {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+/* Banner de Erro de Rede */
+.nozes-chat-error-banner {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(155, 63, 53, 0.2);
+  border: 1px solid rgba(155, 63, 53, 0.45);
+  color: var(--offwhite);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.nozes-chat-error-banner .error-icon-wrap {
+  color: #f87171;
+}
+.nozes-chat-error-banner .error-copy strong {
+  display: block;
+  font-size: 12px;
+  color: #fca5a5;
+  margin-bottom: 2px;
+}
+.nozes-chat-error-banner .error-copy p {
+  margin: 0;
+  font-size: 11px;
+  color: rgba(242, 240, 234, 0.85);
+  line-height: 1.4;
+}
+.nozes-chat-retry-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--graphite);
+  color: var(--gold);
+  border: 1px solid rgba(192, 142, 75, 0.4);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.15s ease;
+}
+.nozes-chat-retry-btn:hover {
+  background: var(--gold);
+  color: var(--graphite);
+}
+
+/* Pílulas de Ação (Diagnóstico / WhatsApp) */
+.nozes-chat-action-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  padding-left: 32px;
+}
+.chat-action-pill {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+  width: fit-content;
+}
+.chat-action-pill.diagnostic {
+  background: rgba(192, 142, 75, 0.18);
+  color: var(--gold);
+  border-color: rgba(192, 142, 75, 0.4);
+}
+.chat-action-pill.diagnostic:hover {
+  background: var(--gold);
+  color: var(--graphite);
+}
+.chat-action-pill.whatsapp {
+  background: rgba(31, 59, 51, 0.6);
+  color: var(--offwhite);
+  border-color: rgba(242, 240, 234, 0.2);
+}
+.chat-action-pill.whatsapp:hover {
+  background: var(--evergreen);
+  border-color: var(--gold);
+}
+
+/* Sugestões de Início Rápido */
+.nozes-chat-quick-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding-left: 32px;
+}
+.quick-prompts-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+.quick-prompts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.quick-prompt-btn {
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(242, 240, 234, 0.06);
+  border: 1px solid rgba(242, 240, 234, 0.12);
+  color: rgba(242, 240, 234, 0.9);
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.quick-prompt-btn:hover {
+  background: rgba(192, 142, 75, 0.15);
+  border-color: var(--gold);
+  color: var(--offwhite);
+  transform: translateX(2px);
+}
+
+/* Barra de Entrada / Rodapé */
+.nozes-chat-input-bar {
+  padding: 12px 14px;
+  background: rgba(20, 22, 21, 0.98);
+  border-top: 1px solid rgba(242, 240, 234, 0.12);
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.nozes-chat-textarea {
+  flex: 1;
+  min-height: 42px;
+  max-height: 120px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(35, 38, 36, 0.9);
+  border: 1px solid rgba(242, 240, 234, 0.16);
+  color: var(--offwhite);
+  font-size: 13px;
+  line-height: 1.4;
+  resize: none;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.nozes-chat-textarea::placeholder {
+  color: rgba(242, 240, 234, 0.4);
+}
+.nozes-chat-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(192, 142, 75, 0.2);
+}
+.nozes-chat-send-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--graphite);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.nozes-chat-send-btn:hover:not(:disabled) {
+  background: #cca05d;
+  transform: scale(1.04);
+}
+.nozes-chat-send-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   ADAPTAÇÃO RESPONSIVA E COEXISTÊNCIA MOBILE
+   360px, 390px, 768px, 1024px, 1440px
+   - Alvos de toque de no mínimo 44px
+   - Se a barra fixa mobile estiver visível (bottom: 0, 64px de altura),
+     o botão flutuante sobe para 78px para nunca cobrir nem conflitar
+   - O painel mobile ocupa largura total com margens de 8px e até 82% da altura
+   ========================================================================== */
+@media (max-width: 640px) {
+  .nozes-chat-trigger-btn {
+    bottom: 18px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+  }
+  /* Quando a barra fixa mobile estiver visível na tela */
+  .nozes-chat-trigger-btn.has-mobile-bar {
+    bottom: 76px;
+  }
+
+  .nozes-chat-panel {
+    bottom: 8px;
+    right: 8px;
+    left: 8px;
+    width: calc(100vw - 16px);
+    max-width: none;
+    height: 84vh;
+    max-height: 84vh;
+    border-radius: 18px;
+  }
+  .nozes-chat-panel.has-mobile-bar {
+    bottom: 72px;
+    height: calc(84vh - 64px);
+    max-height: calc(84vh - 64px);
+  }
+
+  .nozes-chat-header {
+    padding: 12px 14px;
+  }
+  .nozes-chat-icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .nozes-chat-send-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .nozes-chat-textarea {
+    font-size: 14px;
+    min-height: 44px;
+  }
+  .chat-action-pill {
+    min-height: 44px;
+    width: 100%;
+    justify-content: center;
+  }
+  .nozes-chat-action-pills,
+  .nozes-chat-quick-prompts {
+    padding-left: 0;
+  }
+}
+
+/* PREFERS-REDUCED-MOTION: Micro animações respeitadas sem quebrar */
+@media (prefers-reduced-motion: reduce) {
+  .nozes-chat-trigger-btn,
+  .nozes-chat-panel,
+  .nozes-chat-row,
+  .typing-dot,
+  .nozes-chat-trigger-ping {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  .nozes-chat-trigger-ping {
+    display: none !important;
+  }
+  .nozes-chat-panel {
+    transform: none !important;
+  }
+  .nozes-chat-row {
+    transform: none !important;
+  }
+}
