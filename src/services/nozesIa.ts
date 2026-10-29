@@ -9,9 +9,15 @@ export interface ChatMessage {
   leadCaptured?: boolean
 }
 
+export interface ChatHistoryEntry {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 export interface SendChatMessageParams {
   message: string
   conversationId: string | null
+  history?: ChatHistoryEntry[]
   signal?: AbortSignal
 }
 
@@ -24,6 +30,7 @@ export interface SendChatMessageResult {
 export async function sendChatMessage({
   message,
   conversationId,
+  history,
   signal,
 }: SendChatMessageParams): Promise<SendChatMessageResult> {
   const backendUrl = import.meta.env.VITE_POCKETBASE_URL || ''
@@ -35,6 +42,7 @@ export async function sendChatMessage({
     body: JSON.stringify({
       message,
       conversation_id: conversationId,
+      history,
     }),
     signal,
   })

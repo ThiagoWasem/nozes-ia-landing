@@ -10,7 +10,7 @@ import {
   ArrowUpRight,
   ClipboardList,
 } from 'lucide-react'
-import { sendChatMessage } from '@/services/nozesIa'
+import { sendChatMessage, type ChatHistoryEntry } from '@/services/nozesIa'
 import { WHATSAPP_URL } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
 
@@ -207,9 +207,20 @@ export function ChatWidget({
 
     try {
       abortControllerRef.current = new AbortController()
+
+      // Constrói histórico completo da conversa atual (user e assistant) excluindo erros
+      // para garantir que mesmo perguntas contextuais ("e agenda também?") tenham contexto total
+      const historyToSend: ChatHistoryEntry[] = messages
+        .filter((m) => !m.isError && m.text && m.text.trim().length > 0)
+        .map((m) => ({
+          role: m.role,
+          content: m.text,
+        }))
+
       const res = await sendChatMessage({
         message: textToSend,
         conversationId: conversationIdRef.current,
+        history: historyToSend,
         signal: abortControllerRef.current.signal,
       })
 

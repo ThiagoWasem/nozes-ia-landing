@@ -27,13 +27,60 @@ routerAdd('POST', '/backend/v1/nozes-ia/chat', (e) => {
       }
     }
 
-    const conversationId = body.conversation_id || null
+    // Suporte robusto a continuidade de contexto:
+    // 1. conversation_id nativo do agente Skip Cloud
+    // 2. history opcional [{ role: 'user'|'assistant', content: string }] vindo do cliente
+    // Se o cliente enviar o histórico anterior da sessão, prefixamos no prompt para garantir
+    // compreensão contínua imediata caso a conversa ainda esteja sem ID persistido ou recém-criada
+    let promptToSend = message
+    const rawHistory = Array.isArray(body.history) ? body.history : []
+    const validHistory = rawHistory
+      .filter(
+        (item) =>
+          item &&
+          (item.role === 'user' || item.role === 'assistant') &&
+          typeof item.content === 'string',
+      )
+      .slice(-10) // últimas 10 trocas de mensagens na sessão
 
-    const result = $ai.agent('nozes-ia').chat({
-      user_id: userId,
-      conversation_id: conversationId,
-      message: message,
-    })
+    // Se temos histórico recente anterior à mensagem atual e a mensagem é curta/dependente de contexto
+    if (validHistory.length > 0) {
+      const formattedHistory = validHistory
+        .map(
+          (item) =>
+            `${item.role === 'user' ? 'Visitante' : 'Assistente Nozes IA'}: ${item.content.trim()}`,
+        )
+        .join('\n')
+
+      promptToSend = `[HISTÓRICO DA CONVERSA NESTA SESSÃO]:\n${formattedHistory}\n\n[NOVA MENSAGEM DO VISITANTE]:\n${message}`
+    }
+
+    let conversationId = body.conversation_id || null
+    let result
+
+    try {
+      result = $ai.agent('nozes-ia').chat({
+        user_id: userId,
+        conversation_id: conversationId,
+        message: promptToSend,
+      })
+    } catch (chatErr) {
+      // Se falhar por conversation_id expirado/inválido, tenta novamente iniciando nova conversa
+      if (
+        conversationId &&
+        (chatErr instanceof SkipAiAgentsError ||
+          (chatErr && chatErr.message && chatErr.message.includes('conversation')))
+      ) {
+        conversationId = null
+        result = $ai.agent('nozes-ia').chat({
+          user_id: userId,
+          conversation_id: null,
+          message: promptToSend,
+        })
+      } else {
+        throw chatErr
+      }
+    }
 
     return e.json(200, {
       conversation_id: result.conversation_id,
