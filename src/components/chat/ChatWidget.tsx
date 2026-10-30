@@ -6,13 +6,14 @@ import {
   Loader2,
   AlertTriangle,
   RotateCcw,
-  Sparkles,
   ArrowUpRight,
   ClipboardList,
 } from 'lucide-react'
 import { sendChatMessage, type ChatHistoryEntry } from '@/services/nozesIa'
 import { WHATSAPP_URL } from '@/lib/site'
 import { trackEvent } from '@/lib/analytics'
+import { Logo } from '@/components/Logo'
+import { FormattedMessage } from './FormattedMessage'
 
 export interface ChatWidgetProps {
   /** Se a barra fixa mobile estiver visível na tela */
@@ -313,16 +314,16 @@ export function ChatWidget({
         {/* Cabeçalho */}
         <header className="nozes-chat-header">
           <div className="nozes-chat-header-info">
-            <div className="nozes-chat-avatar" aria-hidden="true">
-              <Sparkles size={18} />
+            <div className="nozes-chat-avatar" aria-hidden="true" title="Nozes IA">
+              <Logo variant="symbol" tone="evergreen" className="w-5 h-5" />
               <span className="nozes-chat-status-dot" />
             </div>
             <div className="nozes-chat-header-titles">
               <div className="nozes-chat-title-row">
                 <h3 className="nozes-chat-title">Nozes IA</h3>
-                <span className="nozes-chat-badge">Online</span>
+                <span className="nozes-chat-badge">Consultoria IA</span>
               </div>
-              <p className="nozes-chat-subtitle">Respondemos na hora</p>
+              <p className="nozes-chat-subtitle">Respondemos na hora • Online</p>
             </div>
           </div>
 
@@ -352,19 +353,27 @@ export function ChatWidget({
         <div className="nozes-chat-messages-scroll" tabIndex={0}>
           {messages.map((msg, index) => {
             const isAssistant = msg.role === 'assistant'
+            // Escalonamento suave sutil para as últimas mensagens recém-chegadas
+            const isLatest = index >= messages.length - 2
             return (
               <div
                 key={msg.id || index}
-                className={`nozes-chat-row ${isAssistant ? 'is-assistant' : 'is-user'}`}
+                className={`nozes-chat-row ${isAssistant ? 'is-assistant' : 'is-user'} ${
+                  isLatest ? 'is-latest' : ''
+                }`}
               >
                 {isAssistant && (
-                  <div className="nozes-chat-row-avatar" aria-hidden="true">
-                    <Sparkles size={13} />
+                  <div
+                    className="nozes-chat-row-avatar"
+                    aria-hidden="true"
+                    title="Assistente Nozes IA"
+                  >
+                    <Logo variant="symbol" tone="evergreen" className="w-3.5 h-3.5" />
                   </div>
                 )}
                 <div className="nozes-chat-bubble-wrap">
                   <div className={`nozes-chat-bubble ${msg.role}`}>
-                    <p className="nozes-chat-bubble-text">{msg.text}</p>
+                    <FormattedMessage content={msg.text} role={msg.role} />
                   </div>
                   <span className="nozes-chat-timestamp">{msg.timestamp}</span>
                 </div>
@@ -372,16 +381,26 @@ export function ChatWidget({
             )
           })}
 
-          {/* Indicador de digitação */}
+          {/* Indicador de digitação premium com 3 pontinhos pulsando */}
           {isLoading && (
-            <div className="nozes-chat-row is-assistant">
-              <div className="nozes-chat-row-avatar" aria-hidden="true">
-                <Sparkles size={13} />
+            <div className="nozes-chat-row is-assistant is-typing-row">
+              <div
+                className="nozes-chat-row-avatar"
+                aria-hidden="true"
+                title="Nozes IA digitando..."
+              >
+                <Logo variant="symbol" tone="evergreen" className="w-3.5 h-3.5" />
               </div>
-              <div className="nozes-chat-bubble is-typing" aria-label="Nozes IA está digitando...">
-                <span className="typing-dot" />
-                <span className="typing-dot" />
-                <span className="typing-dot" />
+              <div className="nozes-chat-bubble-wrap">
+                <div
+                  className="nozes-chat-bubble is-typing"
+                  aria-label="Nozes IA está digitando..."
+                >
+                  <span className="typing-dot" />
+                  <span className="typing-dot" />
+                  <span className="typing-dot" />
+                </div>
+                <span className="nozes-chat-timestamp typing-label">digitando...</span>
               </div>
             </div>
           )}
