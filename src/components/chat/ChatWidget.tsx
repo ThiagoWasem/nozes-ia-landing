@@ -42,17 +42,6 @@ const INITIAL_GREETING: MessageItem = {
   timestamp: 'Agora',
 }
 
-function scrollToDiagnosticForm() {
-  const target = document.getElementById('diagnostico')
-  if (target) {
-    target.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-    })
-  } else {
-    window.location.href = '/#diagnostico'
-  }
-}
-
 export function ChatWidget({
   isMobileBarVisible = false,
   isInputFocused = false,
@@ -171,6 +160,35 @@ export function ChatWidget({
   const handleCloseChat = () => {
     setIsOpen(false)
     trackEvent('chat_fechado', { origem: 'painel_nozes_ia' })
+  }
+
+  // Atalho "Preencher diagnóstico gratuito": fecha o painel, limpa estado preso
+  // (foco retido no campo de texto / painel sobreposto) e rola suavemente até o
+  // formulário de diagnóstico a partir de qualquer ponto da página e largura.
+  const handleGoToDiagnostic = () => {
+    trackEvent('clique_cta', { origem: 'chat_atalho_diagnostico' })
+    handleCloseChat()
+    // Libera o foco do textarea para o teclado mobile não cobrir o alvo
+    if (textareaRef.current) {
+      textareaRef.current.blur()
+    }
+    // Aguarda o painel começar a sair de cena antes de rolar até o alvo
+    window.setTimeout(() => {
+      const target = document.getElementById('diagnostico')
+      if (target) {
+        target.scrollIntoView({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            ? 'auto'
+            : 'smooth',
+          block: 'start',
+        })
+        // Deixa o formulário pronto para preencher (foco no primeiro campo, sem rolar de novo)
+        const firstField = target.querySelector<HTMLElement>('input, select, textarea')
+        firstField?.focus({ preventScroll: true })
+      } else {
+        window.location.href = '/#diagnostico'
+      }
+    }, 80)
   }
 
   // Envio de mensagem
@@ -435,10 +453,7 @@ export function ChatWidget({
               <button
                 type="button"
                 className="chat-action-pill diagnostic"
-                onClick={() => {
-                  trackEvent('clique_cta', { origem: 'chat_atalho_diagnostico' })
-                  scrollToDiagnosticForm()
-                }}
+                onClick={handleGoToDiagnostic}
               >
                 <ClipboardList size={13} aria-hidden="true" />
                 <span>Preencher diagnóstico gratuito</span>

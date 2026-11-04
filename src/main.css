@@ -1327,6 +1327,10 @@ html.js-reveal [data-reveal].is-revealed {
 }
 .phone-header span {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-weight: 600;
 }
 .phone-header i {
@@ -1390,9 +1394,18 @@ html.js-reveal [data-reveal].is-revealed {
   background: var(--white);
   font-size: 10px;
 }
-.phone-input span {
+/* Rótulo "Mensagem" em linha única (bug de quebra/sobreposição em 360px:
+   o estilo de círculo vale só para o botão de enviar, não para o rótulo) */
+.phone-input span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.phone-input span:last-child {
   width: 25px;
   height: 25px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -5396,6 +5409,11 @@ html.js-reveal [data-reveal].is-revealed {
     width: 52px;
     height: 52px;
   }
+  /* Com o painel aberto o botão flutuante sai da frente: o fechar fica apenas
+     no cabeçalho (44px), nunca sobre o campo de texto nem o botão de enviar */
+  .nozes-chat-trigger-btn.is-active {
+    display: none;
+  }
   /* Quando a barra fixa mobile estiver visível na tela */
   .nozes-chat-trigger-btn.has-mobile-bar {
     bottom: 76px;
@@ -5408,7 +5426,9 @@ html.js-reveal [data-reveal].is-revealed {
     width: calc(100vw - 16px);
     max-width: none;
     height: 84vh;
+    height: 84svh;
     max-height: 84vh;
+    max-height: 84svh;
     border-radius: 18px;
   }
   .nozes-chat-panel.has-mobile-bar {
@@ -5433,6 +5453,10 @@ html.js-reveal [data-reveal].is-revealed {
   .nozes-chat-textarea {
     font-size: 14px;
     min-height: 44px;
+  }
+  /* Teclado/safe-area não cobrem o campo de envio */
+  .nozes-chat-input-bar {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
   .chat-action-pill {
     min-height: 44px;
@@ -5467,5 +5491,16 @@ html.js-reveal [data-reveal].is-revealed {
   .nozes-chat-row {
     transform: none !important;
     animation: none !important;
+  }
+}
+
+/* Âncora do formulário de diagnóstico: reserva o espaço do cabeçalho fixo
+   quando a rolagem chega pelo atalho do chat, pelo menu ou pela barra mobile */
+#diagnostico {
+  scroll-margin-top: 96px;
+}
+@media (max-width: 640px) {
+  #diagnostico {
+    scroll-margin-top: 76px;
   }
 }

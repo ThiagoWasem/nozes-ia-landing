@@ -21,7 +21,6 @@ export function HeroDemo() {
   const reduced = useReducedMotion()
   const [elapsed, setElapsed] = useState(reduced ? CYCLE_DURATION : 0)
   const [manualPaused, setManualPaused] = useState(false)
-  const [autoPaused, setAutoPaused] = useState(false)
   const [isInView, setIsInView] = useState(true)
   const rootRef = useRef<HTMLDivElement>(null)
   const elapsedRef = useRef(0)
@@ -59,7 +58,9 @@ export function HeroDemo() {
       return
     }
 
-    const shouldRun = isInView && isTabVisible && !manualPaused && !autoPaused
+    // Pausa/retoma manual sempre vence: sem "auto pausa" por hover, o clique em
+    // "Retomar" restaura o loop imediatamente, mesmo com o ponteiro sobre a demo.
+    const shouldRun = isInView && isTabVisible && !manualPaused
     if (!shouldRun) {
       lastTimeRef.current = null
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
@@ -109,12 +110,6 @@ export function HeroDemo() {
       ref={rootRef}
       className="hero-demo"
       aria-label="Demonstração ilustrativa de atendimento e agendamento automatizado"
-      onMouseEnter={() => setAutoPaused(true)}
-      onMouseLeave={() => setAutoPaused(false)}
-      onFocusCapture={() => setAutoPaused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setAutoPaused(false)
-      }}
     >
       <span className="demo-label">Demonstração ilustrativa</span>
       <div className="chat-window">
