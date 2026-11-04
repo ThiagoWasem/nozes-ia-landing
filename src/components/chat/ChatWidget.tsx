@@ -58,6 +58,7 @@ export function ChatWidget({
   const conversationIdRef = useRef<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const triggerBtnRef = useRef<HTMLButtonElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 
   // Recupera histórico apenas de sessionStorage na inicialização para persistência leve de sessão
@@ -175,20 +176,20 @@ export function ChatWidget({
     // Aguarda o painel começar a sair de cena antes de rolar até o alvo
     window.setTimeout(() => {
       const target = document.getElementById('diagnostico')
-      if (target) {
-        target.scrollIntoView({
-          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            ? 'auto'
-            : 'smooth',
-          block: 'start',
-        })
-        // Deixa o formulário pronto para preencher (foco no primeiro campo, sem rolar de novo)
-        const firstField = target.querySelector<HTMLElement>('input, select, textarea')
-        firstField?.focus({ preventScroll: true })
-      } else {
-        window.location.href = '/#diagnostico'
-      }
+      if (!target) return
+      target.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      })
+      // Deixa o formulário pronto para preencher (foco no primeiro campo, sem rolar de novo)
+      const firstField = target.querySelector<HTMLElement>('input, select, textarea')
+      firstField?.focus({ preventScroll: true })
     }, 80)
+    // Devolve o foco ao gatilho flutuante após o painel sair de cena
+    // (no mobile ele só volta a existir visualmente quando is-active é removido)
+    window.setTimeout(() => {
+      triggerBtnRef.current?.focus({ preventScroll: true })
+    }, 240)
   }
 
   // Envio de mensagem
@@ -539,6 +540,7 @@ export function ChatWidget({
       {/* BOTÃO FLUTUANTE DE CHAT (Dourado da paleta, canto inferior direito) */}
       <button
         type="button"
+        ref={triggerBtnRef}
         className={`nozes-chat-trigger-btn ${isOpen ? 'is-active' : ''} ${
           isMobileLifted ? 'has-mobile-bar' : ''
         }`}

@@ -143,7 +143,6 @@ export function Layout({ children }: LayoutProps) {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-revealed')
-            observer.unobserve(entry.target)
           }
         })
       },
