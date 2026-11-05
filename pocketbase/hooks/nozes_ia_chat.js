@@ -28,7 +28,7 @@ routerAdd('POST', '/backend/v1/nozes-ia/chat', (e) => {
     }
 
     // Suporte robusto a continuidade de contexto:
-    // 1. conversation_id nativo do agente Skip Cloud
+    // 1. conversation_id nativo do agente de IA
     // 2. history opcional [{ role: 'user'|'assistant', content: string }] vindo do cliente
     // Se o cliente enviar o histórico anterior da sessão, prefixamos no prompt para garantir
     // compreensão contínua imediata caso a conversa ainda esteja sem ID persistido ou recém-criada

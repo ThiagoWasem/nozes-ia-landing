@@ -65,7 +65,7 @@ function BeforeAfterSlider({
 }
 
 export function CasesSection() {
-  // Conforme o prompt: CASOS_VISIVEIS = false mantém a seção de casos reais oculta até haver material autorizado.
+  // CASOS_VISIVEIS = false mantém a seção de casos reais oculta até haver material autorizado.
   if (!CASOS_VISIVEIS) return null
 
   return (

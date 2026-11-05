@@ -233,7 +233,7 @@ export function Layout({ children }: LayoutProps) {
 
       <div id="conteudo">{children}</div>
 
-      {/* RODAPÉ OFICIAL: Redesign clean, profissional e refinado */}
+      {/* RODAPÉ */}
       <footer className="site-footer" data-reveal>
         <div className="shell footer-top-accent" aria-hidden="true">
           <span className="accent-line" />

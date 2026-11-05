@@ -29,7 +29,7 @@ import { SectionHeading } from './SectionHeading'
      * Título
      * Uma frase de benefício
      * De 2 a 3 itens curtos em "O que entregamos"
-   - Cards especificados no prompt:
+   - Cards:
      1. Sites e landing pages
      2. Portfólios
      3. Catálogos digitais (símbolo próprio da marca e nomes de linguagens em TEXTO orbitando)

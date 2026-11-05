@@ -1,131 +1,79 @@
-# Projeto Criado com o Skip
+# Nozes Ink — landing page de conversão
 
-Este projeto foi criado de ponta a ponta com o [Skip](https://goskip.dev).
+Landing page da minha startup, a Nozes Ink: agência de IA e soluções digitais de Joinville/SC, fundada por Thiago Cabral Wasem e Maria Eduarda Felisbino.
 
-## 🚀 Stack Tecnológica
+**Site no ar:** https://nozesink.goskip.app
 
-- **React 19** - Biblioteca JavaScript para construção de interfaces
-- **Vite** - Build tool extremamente rápida
-- **TypeScript** - Superset tipado do JavaScript
-- **Shadcn UI** - Componentes reutilizáveis e acessíveis
-- **Tailwind CSS** - Framework CSS utility-first
-- **React Router** - Roteamento para aplicações React
-- **React Hook Form** - Gerenciamento de formulários performático
-- **Zod** - Validação de schemas TypeScript-first
-- **Recharts** - Biblioteca de gráficos para React
+<!-- TODO: adicionar aqui uma captura de tela ou GIF do chat da Nozes IA em ação
+     (ex.: salvar o arquivo como docs/chat-nozes-ia.gif e referenciar abaixo):
+     ![Chat da Nozes IA](docs/chat-nozes-ia.gif)
+-->
 
-## 📋 Pré-requisitos
+## O problema que ela resolve
 
-- Node.js 18+
-- npm
+Negócios locais perdem cliente todos os dias por demora e desorganização no atendimento: mensagem que fica sem resposta, orçamento que nunca sai, follow-up que não existe. A Nozes Ink trabalha com um princípio simples — diagnóstico antes da solução. Primeiro identificamos onde o gargalo está; depois implementamos um sistema só, do primeiro contato ao pós-venda, em vez de empilhar ferramentas soltas.
 
-## 🔧 Instalação
+## A IA é o produto — e está demonstrada na própria página
+
+O destaque da landing é a **Nozes IA**: um agente de IA consultivo embutido no próprio site, no widget de chat flutuante. Ele é a melhor vitrine do que vendemos, porque está funcionando ali na frente do visitante.
+
+O que ele faz:
+
+- **Qualifica o visitante em poucas perguntas**, com tom consultivo em vez de script de vendas.
+- **Entende o contexto da conversa** — mantém o histórico da sessão, responde com base no que já foi dito e renderiza as respostas em markdown.
+- **Registra o lead com consentimento LGPD**, gravando no banco com a origem do contato.
+- **Encaminha para a conversão**: diagnóstico gratuito pelo formulário da própria página ou direto no WhatsApp (+55 47 8839-2501).
+
+Ou seja: o marketing demonstra o serviço dentro dele mesmo. Quem chega na página conversa com o mesmo tipo de agente que a Nozes Ink implanta nos negócios dos clientes.
+
+## Stack e arquitetura
+
+- **React 19 + TypeScript + Vite** no frontend, com **Tailwind CSS**.
+- **Backend com banco de dados** (coleção de leads, com regras de acesso) e **agente de IA no servidor** — o frontend fala com uma rota própria de chat em streaming (SSE), nunca direto com o provedor de IA.
+- **Motor de animação próprio**, sem bibliotecas externas de animação: usa IntersectionObserver para disparar entradas na viewport, Web Animations API para as transições e requestAnimationFrame para os loops (todos pausáveis fora da tela ou com "prefers-reduced-motion"). Rodar isso nas APIs nativas do navegador dispensa o bundle de uma biblioteca de animação e evita trabalho de layout na thread principal — em celular barato, é a diferença entre animação fluida e página engasgada.
+- Componentes de UI (shadcn/ui), formulário com react-hook-form + zod e análise de eventos de interação via `trackEvent`.
+
+## Rodando localmente
+
+Pré-requisitos: Node.js 18+ e npm.
 
 ```bash
 npm install
 ```
 
-## 💻 Scripts Disponíveis
+Crie um arquivo `.env` na raiz com a URL do backend (usado pelo formulário de leads e pelo chat):
 
-### Desenvolvimento
+```
+VITE_POCKETBASE_URL=https://seu-backend-url
+```
+
+Depois:
 
 ```bash
-# Iniciar servidor de desenvolvimento
-npm start
-# ou
-npm run dev
+npm run dev       # servidor de desenvolvimento em http://localhost:5173
+npm run build     # build de produção na pasta dist/
+npm run preview   # serve o build localmente
+npm run lint      # oxlint
+npm run format    # oxfmt
 ```
 
-Abre a aplicação em modo de desenvolvimento em [http://localhost:5173](http://localhost:5173).
+O backend do projeto (migrations e lógica de servidor) fica em `pocketbase/`: as collections e o agente de IA são definidos em `pocketbase/migrations/` e as rotas de servidor (inclusive a do chat) em `pocketbase/hooks/`.
 
-### Build
-
-```bash
-# Build para produção
-npm run build
-
-# Build para desenvolvimento
-npm run build:dev
-```
-
-Gera os arquivos otimizados para produção na pasta `dist/`.
-
-### Preview
-
-```bash
-# Visualizar build de produção localmente
-npm run preview
-```
-
-Permite visualizar a build de produção localmente antes do deploy.
-
-### Linting e Formatação
-
-```bash
-# Executar linter
-npm run lint
-
-# Executar linter e corrigir problemas automaticamente
-npm run lint:fix
-
-# Formatar código com Oxfmt
-npm run format
-```
-
-## 📁 Estrutura do Projeto
+## Estrutura
 
 ```
-.
-├── src/              # Código fonte da aplicação
-├── public/           # Arquivos estáticos
-├── dist/             # Build de produção (gerado)
-├── node_modules/     # Dependências (gerado)
-└── package.json      # Configurações e dependências do projeto
+src/
+├── components/
+│   ├── landing/     # seções da página (hero, método, soluções, depoimentos, formulário...)
+│   ├── chat/        # widget do chat Nozes IA + renderização das mensagens
+│   └── ui/          # primitivas de interface
+├── hooks/           # hooks utilitários (movimento, realtime, mobile)
+├── lib/             # configuração do site, cliente do banco, analytics
+├── services/        # chamadas de API (leads, chat)
+└── pages/           # rotas (landing, política de privacidade)
+pocketbase/          # migrations e hooks do backend
 ```
 
-## 🎨 Componentes UI
+## Resultados
 
-Este template inclui uma biblioteca completa de componentes Shadcn UI baseados em Radix UI:
-
-- Accordion
-- Alert Dialog
-- Avatar
-- Button
-- Checkbox
-- Dialog
-- Dropdown Menu
-- Form
-- Input
-- Label
-- Select
-- Switch
-- Tabs
-- Toast
-- Tooltip
-- E muito mais...
-
-## 📝 Ferramentas de Qualidade de Código
-
-- **TypeScript**: Tipagem estática
-- **Oxlint**: Linter extremamente rápido
-- **Oxfmt**: Formatação automática de código
-
-## 🔄 Workflow de Desenvolvimento
-
-1. Instale as dependências: `npm install`
-2. Inicie o servidor de desenvolvimento: `npm start`
-3. Faça suas alterações
-4. Verifique o código: `npm run lint`
-5. Formate o código: `npm run format`
-6. Crie a build: `npm run build`
-7. Visualize a build: `npm run preview`
-
-## 📦 Build e Deploy
-
-Para criar uma build otimizada para produção:
-
-```bash
-npm run build
-```
-
-Os arquivos otimizados serão gerados na pasta `dist/` e estarão prontos para deploy.
+Em coleta.

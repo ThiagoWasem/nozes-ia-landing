@@ -267,7 +267,7 @@ function ShortDiagnosticForm() {
     })
 
     try {
-      /* PONTO DE ENVIO AO POCKETBASE (coleção leads existente via VITE_POCKETBASE_URL):
+      /* PONTO DE ENVIO AO BACKEND (coleção leads, via VITE_POCKETBASE_URL):
          Segurança: Entradas sanitizadas (trim, sem caracteres de controle e sem tags).
          Privacidade: Nenhum dado sensível do lead é emitido em console do navegador. */
       const cleanNome = sanitizeInput(form.nome)

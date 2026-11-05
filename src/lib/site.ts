@@ -2,7 +2,7 @@ export type HeroVariant = 'A' | 'B'
 export type FormVariant = 'curto' | 'etapas'
 
 /* ==========================================================================
-   CONSTANTES DE CONTROLE (PROMPT DEFINITIVO NOZES INK)
+   CONSTANTES DE CONTROLE DO SITE
    - DEPOIMENTOS_VISIVEIS: true. Exibe a seção pois há 6 depoimentos autorizados pelos clientes.
    - CASOS_VISIVEIS: false. Seção de casos reais permanece oculta até haver material autorizado.
    - GOOGLE_REVIEW_URL: link de avaliação no Perfil da Empresa (Google Meu Negócio). Vazio oculta o botão.
