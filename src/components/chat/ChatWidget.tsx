@@ -163,6 +163,22 @@ export function ChatWidget({
     trackEvent('chat_fechado', { origem: 'painel_nozes_ia' })
   }
 
+  // Acessibilidade: a tecla Esc fecha o painel do chat e devolve o foco ao
+  // botão flutuante (o próximo elemento interativo natural do widget).
+  useEffect(() => {
+    if (!isOpen) return
+    const handleEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        setIsOpen(false)
+        trackEvent('chat_fechado', { origem: 'tecla_esc' })
+        triggerBtnRef.current?.focus({ preventScroll: true })
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isOpen])
+
   // Atalho "Preencher diagnóstico gratuito": fecha o painel, limpa estado preso
   // (foco retido no campo de texto / painel sobreposto) e rola suavemente até o
   // formulário de diagnóstico a partir de qualquer ponto da página e largura.

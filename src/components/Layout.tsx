@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { MessageCircle, MapPin, ExternalLink } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { DiagnosticCtaButton } from '@/components/DiagnosticCtaButton'
+import { CookieBanner } from '@/components/CookieBanner'
 import {
   CONFIG,
   WHATSAPP_URL,
@@ -413,6 +414,11 @@ export function Layout({ children }: LayoutProps) {
           <p>© 2026 Nozes Ink. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      {/* BANNER DE COOKIES — desativado (COOKIES_BANNER_ENABLED = false em src/lib/site.ts).
+          Nada renderiza hoje: o site não tem cookies de rastreamento. Código pronto
+          para quando o primeiro rastreador (Analytics/Pixel) for adicionado. */}
+      <CookieBanner />
 
       {/* WIDGET DE CHAT IA (NOZES IA) — Carregamento sob demanda */}
       {chatRequested ? (

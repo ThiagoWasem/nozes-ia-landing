@@ -19,6 +19,17 @@ export const MAPS_EMBED_URL: string = `https://maps.google.com/maps?q=Nozes+Ink%
 export const AB_HERO: HeroVariant = 'A'
 export const FORM_AB: FormVariant = 'curto'
 
+/* ==========================================================================
+   BANNER DE COOKIES (LGPD)
+   - COOKIES_BANNER_ENABLED: false. O site HOJE não usa nenhum cookie de
+     rastreamento (sem Analytics, sem Pixel, sem script de terceiros), então
+     exibir banner seria desnecessário e apenas atrapalharia a conversão.
+   - ATIVAR quando o primeiro rastreador for adicionado (ex.: Google Analytics
+     4, Meta Pixel): basta mudar para true — o componente CookieBanner já está
+     montado no Layout, pronto para capturar aceitar/recusar no localStorage.
+   ========================================================================== */
+export const COOKIES_BANNER_ENABLED = false
+
 // Compatibilidade interna com referências anteriores
 export const VARIANTE_HERO: HeroVariant = AB_HERO
 
