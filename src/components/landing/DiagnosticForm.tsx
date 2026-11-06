@@ -160,6 +160,8 @@ interface FormState {
   segmento: string
   problema: string
   consentimento_lgpd: boolean
+  // Opcional e separado do LGPD: nunca pré-marcado e não bloqueia o envio.
+  consentimento_marketing: boolean
   // Campo honeypot anti-spam (invisível para usuários, bots preenchem)
   website_trap: string
 }
@@ -171,6 +173,7 @@ const initialState: FormState = {
   segmento: '',
   problema: '',
   consentimento_lgpd: false,
+  consentimento_marketing: false,
   website_trap: '',
 }
 
@@ -281,6 +284,8 @@ function ShortDiagnosticForm() {
         whatsapp: cleanWhatsapp,
         segmento: cleanSegmento,
         consentimento_lgpd: true,
+        // Aceite opcional de marketing: registrado apenas quando marcado
+        ...(form.consentimento_marketing ? { consentimento_marketing: true } : {}),
         origem: 'formulario_curto',
         variante_hero: VARIANTE_HERO,
       })
@@ -456,6 +461,26 @@ function ShortDiagnosticForm() {
           </span>
           <span className="consent-text">Concordo em receber contato sobre o diagnóstico.</span>
         </label>
+
+        {/* Segundo checkbox OPCIONAL de marketing: nunca pré-marcado, separado do
+            consentimento essencial (LGPD) e sem qualquer efeito no envio do formulário. */}
+        <label className="consent-field" htmlFor="short-consentimento_marketing">
+          <input
+            id="short-consentimento_marketing"
+            name="consentimento_marketing"
+            type="checkbox"
+            checked={form.consentimento_marketing}
+            onChange={(e) => handleFieldChange('consentimento_marketing', e.target.checked)}
+            disabled={loading}
+          />
+          <span className="checkbox-visual" aria-hidden="true">
+            <Check size={14} />
+          </span>
+          <span className="consent-text">
+            Concordo em receber novidades e conteúdos da Nozes Ink (opcional)
+          </span>
+        </label>
+
         <div className="consent-policy-link-wrapper">
           <Link
             to="/politica-de-privacidade"
@@ -677,6 +702,8 @@ function SteppedDiagnosticForm() {
         whatsapp: cleanWhatsapp,
         segmento: cleanSegmento,
         consentimento_lgpd: true,
+        // Aceite opcional de marketing: registrado apenas quando marcado
+        ...(form.consentimento_marketing ? { consentimento_marketing: true } : {}),
         origem: origemDetalhada,
         variante_hero: VARIANTE_HERO,
       })
@@ -987,6 +1014,25 @@ function SteppedDiagnosticForm() {
                 </span>
                 <span className="consent-text">
                   Concordo em receber contato sobre o diagnóstico.
+                </span>
+              </label>
+
+              {/* Segundo checkbox OPCIONAL de marketing: nunca pré-marcado, separado do
+                  consentimento essencial (LGPD) e sem qualquer efeito no envio. */}
+              <label className="consent-field" htmlFor="step-consentimento_marketing">
+                <input
+                  id="step-consentimento_marketing"
+                  name="consentimento_marketing"
+                  type="checkbox"
+                  checked={form.consentimento_marketing}
+                  onChange={update}
+                  disabled={loading}
+                />
+                <span className="checkbox-visual" aria-hidden="true">
+                  <Check size={14} />
+                </span>
+                <span className="consent-text">
+                  Concordo em receber novidades e conteúdos da Nozes Ink (opcional)
                 </span>
               </label>
               <div className="consent-policy-link-wrapper">

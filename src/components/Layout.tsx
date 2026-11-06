@@ -404,11 +404,11 @@ export function Layout({ children }: LayoutProps) {
             <span className="sep" aria-hidden="true">
               •
             </span>
-            <span>Cookies</span>
+            <Link to="/politica-de-privacidade#canal-do-titular">Excluir meus dados</Link>
             <span className="sep" aria-hidden="true">
               •
             </span>
-            <span>Termos de uso</span>
+            <Link to="/termos-de-uso">Termos de uso</Link>
           </div>
           <p>© 2026 Nozes Ink. Todos os direitos reservados.</p>
         </div>

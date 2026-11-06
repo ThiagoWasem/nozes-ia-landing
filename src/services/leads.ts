@@ -6,6 +6,9 @@ export interface LeadInput {
   whatsapp: string
   segmento: string
   consentimento_lgpd: true
+  // Opcional e separado do consentimento essencial (LGPD): nunca pré-marcado,
+  // sua ausência não impede o envio nem o atendimento do pedido.
+  consentimento_marketing?: boolean
   origem: string
   variante_hero: 'A' | 'B'
 }
