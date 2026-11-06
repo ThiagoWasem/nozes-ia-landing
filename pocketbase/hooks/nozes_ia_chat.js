@@ -92,7 +92,7 @@ routerAdd('POST', '/backend/v1/nozes-ia/chat', (e) => {
     if (err instanceof SkipAiConfigError) {
       return e.json(503, { error: 'O assistente de IA está temporariamente indisponível.' })
     }
-    if (err instanceof SkipAiAgentsError) {
+    if (err instaceof SkipAiError) {  
       const status = err.status || 500
       return e.json(status, {
         error: status >= 500 ? 'Não foi possível processar sua mensagem agora.' : err.message,
