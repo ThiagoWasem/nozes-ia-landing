@@ -33,6 +33,26 @@ Ou seja: o marketing demonstra o serviço dentro dele mesmo. Quem chega na pági
 - **Motor de animação próprio**, sem bibliotecas externas de animação: usa IntersectionObserver para disparar entradas na viewport, Web Animations API para as transições e requestAnimationFrame para os loops (todos pausáveis fora da tela ou com "prefers-reduced-motion"). Rodar isso nas APIs nativas do navegador dispensa o bundle de uma biblioteca de animação e evita trabalho de layout na thread principal — em celular barato, é a diferença entre animação fluida e página engasgada.
 - Componentes de UI (shadcn/ui), formulário com react-hook-form + zod e análise de eventos de interação via `trackEvent`.
 
+## Arquivo de verificação do Google Search Console (PERMANENTE)
+
+O arquivo `public/google23b3d35ddd8192c4.html` é a verificação de propriedade do
+Google Search Console e fica servido em
+https://nozesink.goskip.app/google23b3d35ddd8192c4.html.
+
+**O Google avisa: este arquivo NUNCA deve ser removido do repositório nem da
+pasta `public/` — se ele sair do ar, a verificação do site é revogada.**
+Qualquer mudança futura de build/hosting precisa mantê-lo na raiz do site.
+
+## SEO
+
+Arquivos estáticos na raiz do site (pasta `public/`, copiada pelo Vite para a
+raiz do build): `google23b3d35ddd8192c4.html` (verificação), `sitemap.xml`,
+`robots.txt` e `llms.txt` (guia factual para modelos de linguagem). Meta tags,
+Open Graph, Twitter Card e dados estruturados (JSON-LD, schema.org
+ProfessionalService) ficam em `index.html` — o comentário no `<head>` indica
+onde colar a meta tag de verificação alternativa do Search Console, se for
+usar esse método.
+
 ## Rodando localmente
 
 Pré-requisitos: Node.js 18+ e npm.
